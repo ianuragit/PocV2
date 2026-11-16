@@ -19,7 +19,13 @@ export default defineConfig({
     __COMMIT__: JSON.stringify(commitHash()),
   },
   test: {
-    include: ['tests/unit/**/*.test.ts', 'tests/sim/**/*.test.ts'],
+    include: ['tests/**/*.test.ts'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/sim/**/*.ts'],
+      exclude: ['src/sim/index.ts', 'src/sim/types.ts'],
+      thresholds: { lines: 90, statements: 90, functions: 90, branches: 85 },
+    },
     environment: 'node',
   },
 });

@@ -1,5 +1,4 @@
-// M0 placeholder for data validation: checks tuning.json parses and ASSETS.md exists.
-// Stage schema, marker and asset-log checks arrive with M1 and M3.
+// Checks tuning.json parses and ASSETS.md exists. Stage files are validated by tests/data (npm run validate runs both).
 import { existsSync, readFileSync } from 'node:fs';
 
 let failed = false;

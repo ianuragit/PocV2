@@ -18,7 +18,7 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run validate
-      - run: npm test
+      - run: npm run coverage # Vitest: unit, simulation bots, 90% coverage of src/sim
       - run: npm run build
       - run: npm run budget
       - run: npx playwright install --with-deps chromium
