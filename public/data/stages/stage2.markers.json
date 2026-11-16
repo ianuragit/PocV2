@@ -1,0 +1,889 @@
+{
+  "Cover_Barrels": {
+    "position": [
+      3.7,
+      0.55,
+      174.2302
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.7,
+      0.55,
+      0.7
+    ]
+  },
+  "Cover_CameraDolly": {
+    "position": [
+      6.5541,
+      0.5,
+      75.3209
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.7,
+      0.5,
+      0.85
+    ]
+  },
+  "Cover_Cases": {
+    "position": [
+      -3.4,
+      0.55,
+      12.6
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.8,
+      0.55,
+      0.6
+    ]
+  },
+  "Cover_CastleWall": {
+    "position": [
+      -5.6,
+      1.8,
+      96.2617
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      3.4,
+      1.8,
+      0.3
+    ]
+  },
+  "Cover_Generator": {
+    "position": [
+      -4.2414,
+      0.6,
+      46.698
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.9,
+      0.6,
+      0.7
+    ]
+  },
+  "Cover_GolfCart": {
+    "position": [
+      3.1,
+      0.65,
+      30.1
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.7,
+      0.65,
+      1.1
+    ]
+  },
+  "Cover_PropCrates": {
+    "position": [
+      -3.3419,
+      0.7,
+      141.8327
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.9,
+      0.7,
+      0.8
+    ]
+  },
+  "Crate_Lot": {
+    "position": [
+      5.5,
+      0,
+      26
+    ],
+    "rotation": [
+      0,
+      -2.3996,
+      0
+    ]
+  },
+  "Crate_Stage": {
+    "position": [
+      0.84,
+      0,
+      90.46
+    ],
+    "rotation": [
+      0,
+      2.6841,
+      0
+    ]
+  },
+  "Look_Boss": {
+    "position": [
+      0,
+      2,
+      186.0302
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_LotA": {
+    "position": [
+      0,
+      1.2,
+      16
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_LotB": {
+    "position": [
+      0,
+      1.2,
+      32
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_LotC": {
+    "position": [
+      -0.1414,
+      1.2,
+      47.998
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_PropsA": {
+    "position": [
+      -0.2419,
+      1.2,
+      144.0327
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_PropsB": {
+    "position": [
+      0,
+      1.2,
+      162.0302
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_StageA": {
+    "position": [
+      3.8541,
+      1.2,
+      77.9709
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_StageB": {
+    "position": [
+      4.0351,
+      1.2,
+      95.9617
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_StageC": {
+    "position": [
+      4.2235,
+      1.2,
+      111.9591
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_000": {
+    "position": [
+      0,
+      1.6,
+      -8
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_001": {
+    "position": [
+      0,
+      1.6,
+      10
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_002": {
+    "position": [
+      0,
+      1.6,
+      30
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_003": {
+    "position": [
+      0,
+      1.6,
+      46
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_004": {
+    "position": [
+      2.5,
+      1.6,
+      56
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_005": {
+    "position": [
+      4,
+      1.6,
+      68
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_006": {
+    "position": [
+      4,
+      1.6,
+      88
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_007": {
+    "position": [
+      4,
+      1.6,
+      106
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_008": {
+    "position": [
+      2,
+      1.6,
+      116
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_009": {
+    "position": [
+      0,
+      1.6,
+      126
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_010": {
+    "position": [
+      0,
+      1.6,
+      146
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_011": {
+    "position": [
+      0,
+      1.6,
+      162
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_012": {
+    "position": [
+      0,
+      1.6,
+      172
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Spawn_AisleL": {
+    "position": [
+      -6.74,
+      0,
+      146.03
+    ],
+    "rotation": [
+      0,
+      2.7069,
+      0
+    ]
+  },
+  "Spawn_AisleR": {
+    "position": [
+      6.26,
+      0,
+      144.03
+    ],
+    "rotation": [
+      0,
+      -2.6452,
+      0
+    ]
+  },
+  "Spawn_BalconyL": {
+    "position": [
+      0.02,
+      2.5,
+      113.46
+    ],
+    "rotation": [
+      0,
+      2.84,
+      0
+    ]
+  },
+  "Spawn_BalconyR": {
+    "position": [
+      -3.28,
+      2.5,
+      113.46
+    ],
+    "rotation": [
+      0,
+      2.6345,
+      0
+    ]
+  },
+  "Spawn_BossBow": {
+    "position": [
+      -3.5,
+      1.2,
+      187.03
+    ],
+    "rotation": [
+      0,
+      2.9385,
+      0
+    ]
+  },
+  "Spawn_BossDeck": {
+    "position": [
+      0,
+      1.2,
+      188.03
+    ],
+    "rotation": [
+      0,
+      3.1416,
+      0
+    ]
+  },
+  "Spawn_BossGuardL": {
+    "position": [
+      -5.5,
+      0,
+      175.53
+    ],
+    "rotation": [
+      0,
+      2.3562,
+      0
+    ]
+  },
+  "Spawn_BossGuardR": {
+    "position": [
+      6.5,
+      0,
+      172.53
+    ],
+    "rotation": [
+      0,
+      -1.938,
+      0
+    ]
+  },
+  "Spawn_BossStern": {
+    "position": [
+      3.5,
+      1.2,
+      187.03
+    ],
+    "rotation": [
+      0,
+      -2.9385,
+      0
+    ]
+  },
+  "Spawn_CastleLeft": {
+    "position": [
+      2.84,
+      0,
+      95.56
+    ],
+    "rotation": [
+      0,
+      3.0385,
+      0
+    ]
+  },
+  "Spawn_CastleTop": {
+    "position": [
+      -3.3,
+      3.6,
+      96.26
+    ],
+    "rotation": [
+      0,
+      2.6036,
+      0
+    ]
+  },
+  "Spawn_CratesLeft": {
+    "position": [
+      -1.64,
+      0,
+      141.83
+    ],
+    "rotation": [
+      0,
+      2.9997,
+      0
+    ]
+  },
+  "Spawn_HeadRight": {
+    "position": [
+      5,
+      0,
+      160.03
+    ],
+    "rotation": [
+      0,
+      -2.6779,
+      0
+    ]
+  },
+  "Spawn_LotAwning": {
+    "position": [
+      -6,
+      0,
+      35
+    ],
+    "rotation": [
+      0,
+      2.7611,
+      0
+    ]
+  },
+  "Spawn_LotBCivilian": {
+    "position": [
+      -5,
+      0,
+      26.5
+    ],
+    "rotation": [
+      0,
+      2.4859,
+      0
+    ]
+  },
+  "Spawn_LotCartBehind": {
+    "position": [
+      5.8,
+      0,
+      33
+    ],
+    "rotation": [
+      0,
+      -2.7219,
+      0
+    ]
+  },
+  "Spawn_LotCartLeft": {
+    "position": [
+      1.8,
+      0,
+      30
+    ],
+    "rotation": [
+      0,
+      -2.9635,
+      0
+    ]
+  },
+  "Spawn_LotCasesLeft": {
+    "position": [
+      -1.9,
+      0,
+      12.6
+    ],
+    "rotation": [
+      0,
+      2.9242,
+      0
+    ]
+  },
+  "Spawn_LotCivilian": {
+    "position": [
+      4.5,
+      0,
+      11
+    ],
+    "rotation": [
+      0,
+      -2.5703,
+      0
+    ]
+  },
+  "Spawn_LotDoorL": {
+    "position": [
+      -8.2,
+      0,
+      16
+    ],
+    "rotation": [
+      0,
+      2.5421,
+      0
+    ]
+  },
+  "Spawn_LotDoorR": {
+    "position": [
+      8.2,
+      0,
+      31
+    ],
+    "rotation": [
+      0,
+      -2.501,
+      0
+    ]
+  },
+  "Spawn_LotFarL": {
+    "position": [
+      -7.64,
+      0,
+      50
+    ],
+    "rotation": [
+      0,
+      2.6498,
+      0
+    ]
+  },
+  "Spawn_LotFarR": {
+    "position": [
+      4.86,
+      0,
+      49
+    ],
+    "rotation": [
+      0,
+      -2.7744,
+      0
+    ]
+  },
+  "Spawn_LotGenRight": {
+    "position": [
+      -2.74,
+      0,
+      46.6
+    ],
+    "rotation": [
+      0,
+      2.9011,
+      0
+    ]
+  },
+  "Spawn_LotMid": {
+    "position": [
+      0.36,
+      0,
+      47
+    ],
+    "rotation": [
+      0,
+      -3.0962,
+      0
+    ]
+  },
+  "Spawn_LotRoad": {
+    "position": [
+      2,
+      0,
+      18
+    ],
+    "rotation": [
+      0,
+      -2.9997,
+      0
+    ]
+  },
+  "Spawn_PropsACivilian": {
+    "position": [
+      3.76,
+      0,
+      138.53
+    ],
+    "rotation": [
+      0,
+      -2.5899,
+      0
+    ]
+  },
+  "Spawn_PropsAMid": {
+    "position": [
+      0.76,
+      0,
+      148.03
+    ],
+    "rotation": [
+      0,
+      -3.0792,
+      0
+    ]
+  },
+  "Spawn_PropsBFar": {
+    "position": [
+      -1.5,
+      0,
+      166.03
+    ],
+    "rotation": [
+      0,
+      3.0481,
+      0
+    ]
+  },
+  "Spawn_PropsBL": {
+    "position": [
+      -5,
+      0,
+      162.03
+    ],
+    "rotation": [
+      0,
+      2.7468,
+      0
+    ]
+  },
+  "Spawn_PropsBNear": {
+    "position": [
+      -2.5,
+      0,
+      158.53
+    ],
+    "rotation": [
+      0,
+      2.8555,
+      0
+    ]
+  },
+  "Spawn_RocksRight": {
+    "position": [
+      10.24,
+      0,
+      93.96
+    ],
+    "rotation": [
+      0,
+      -2.5866,
+      0
+    ]
+  },
+  "Spawn_StageBCrew": {
+    "position": [
+      -0.46,
+      0,
+      89.46
+    ],
+    "rotation": [
+      0,
+      2.4559,
+      0
+    ]
+  },
+  "Spawn_StageBMid": {
+    "position": [
+      5.54,
+      0,
+      98.96
+    ],
+    "rotation": [
+      0,
+      -3.0419,
+      0
+    ]
+  },
+  "Spawn_StageCFar": {
+    "position": [
+      3.22,
+      0,
+      115.96
+    ],
+    "rotation": [
+      0,
+      3.0792,
+      0
+    ]
+  },
+  "Spawn_StageCFloor": {
+    "position": [
+      6.72,
+      0,
+      109.96
+    ],
+    "rotation": [
+      0,
+      -2.8966,
+      0
+    ]
+  },
+  "Spawn_StageCrew": {
+    "position": [
+      -1.15,
+      0,
+      72.97
+    ],
+    "rotation": [
+      0,
+      2.5213,
+      0
+    ]
+  },
+  "Spawn_StageDollyLeft": {
+    "position": [
+      4.75,
+      0,
+      75.37
+    ],
+    "rotation": [
+      0,
+      -3.0461,
+      0
+    ]
+  },
+  "Spawn_StageFloorL": {
+    "position": [
+      -2.15,
+      0,
+      77.97
+    ],
+    "rotation": [
+      0,
+      2.6779,
+      0
+    ]
+  },
+  "Spawn_StageFloorR": {
+    "position": [
+      10.85,
+      0,
+      78.97
+    ],
+    "rotation": [
+      0,
+      -2.6477,
+      0
+    ]
+  }
+}

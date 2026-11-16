@@ -32,6 +32,11 @@ export interface ScreenData {
   sfxVolume?: number;
   status?: string;
   message?: string;
+  stageLabel?: string;
+  stagesUnlocked?: number;
+  stagesTotal?: number;
+  /** Results: the name of a stage this clear just unlocked. */
+  unlocked?: string;
 }
 
 const CONTROLS =
@@ -98,6 +103,12 @@ export class Screens {
       case 'title':
         return `<h1 class="logo">REAL COP 2</h1>
           <p class="blink">CLICK TO START</p>
+          <div class="menu">${btn('stage', d.stageLabel ?? 'STAGE 1', 'primary')}</div>
+          ${
+            (d.stagesTotal ?? 0) > (d.stagesUnlocked ?? 0)
+              ? `<p class="small">CLEAR A STAGE TO UNLOCK THE NEXT (${d.stagesUnlocked}/${d.stagesTotal} OPEN)</p>`
+              : ''
+          }
           <div class="menu">
             ${btn('difficulty', `DIFFICULTY: ${(d.difficulty ?? 'normal').toUpperCase()}`)}
             ${btn('scores', 'HIGH SCORES')}
@@ -128,6 +139,7 @@ export class Screens {
           <div class="stats">SCORE ${pad(d.score ?? 0)}<br>HIT RATE ${d.accuracy ?? 0}%${
             d.continuesUsed ? `<br>CONTINUES ${d.continuesUsed}` : ''
           }</div>
+          ${d.unlocked ? `<p class="unlock">NEW STAGE UNLOCKED: ${esc(d.unlocked.toUpperCase())}</p>` : ''}
           ${entry}`;
       }
       case 'scores': {
@@ -164,6 +176,7 @@ export class Screens {
         return `<h2>CREDITS</h2>
           <div class="credits">
             <p><b>REAL COP 2</b> · an original on-rails shooter</p>
+            <p>Built by: <b>Anurag</b></p>
             <p>Code, stage, characters, music and sound effects made for this game.<br>
               Music and effects are synthesized live in your browser; there are no audio files.</p>
             <p>3D rendering: <b>three.js</b> · MIT licence ·

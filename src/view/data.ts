@@ -63,3 +63,9 @@ export async function loadGameData(
   onProgress(1);
   return { tuning, stage, markers, environment };
 }
+
+/** The stage list for the title screen: ids and names only, so no stage is downloaded to show it. */
+export async function loadCatalog(): Promise<{ id: string; name: string }[]> {
+  const index = await getJson<{ stages: { id: string; name: string }[] }>('data/stages/index.json');
+  return index.stages;
+}

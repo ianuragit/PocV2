@@ -54,6 +54,7 @@ test.describe('stage 1 (M3 + M4 acceptance)', () => {
     await expect(page.locator('#screen h2')).toHaveText('STAGE CLEAR');
     await expect(page.locator('.rank')).toHaveText('A');
     await expect(page.locator('#screen .stats')).toContainText('SCORE 0074000');
+    await expect(page.locator('.unlock')).toHaveText('NEW STAGE UNLOCKED: STUDIO BACKLOT');
     await snap(page, 'stage1-results');
 
     // Type initials into the real field; game keys (R, P, Space) must not fire while typing.

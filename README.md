@@ -2,7 +2,7 @@
 
 An on-rails police shooter that runs in the browser. TypeScript, Three.js, Vite, deployed to GitHub Pages.
 
-**Play:** https://ianuragit.github.io/PocV2/ (once Pages is enabled, see below)
+**Play:** https://ianuragit.github.io/PocV2/
 
 ## Develop
 

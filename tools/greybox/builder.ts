@@ -64,3 +64,56 @@ export class MeshBuilder {
     return this.mesh.positions.length / 9;
   }
 }
+
+export interface PrismOptions {
+  /** Radius at the top; defaults to the bottom radius (a prism). Smaller makes a frustum or cone. */
+  topRadius?: number;
+  /** Colour of the top cap; defaults to the side colour. */
+  top?: number;
+}
+
+/**
+ * A vertical prism (or frustum) with `sides` flat faces, standing on (cx, y0, cz). Low side counts
+ * keep the faceted, flat-shaded look; 6 to 10 reads as round.
+ */
+export function prism(
+  mb: MeshBuilder,
+  cx: number,
+  y0: number,
+  cz: number,
+  radius: number,
+  height: number,
+  sides: number,
+  color: number,
+  opts: PrismOptions = {},
+): void {
+  const r1 = opts.topRadius ?? radius;
+  const y1 = y0 + height;
+  const at = (r: number, i: number, y: number) => {
+    const a = (i / sides) * Math.PI * 2;
+    return [cx + Math.cos(a) * r, y, cz + Math.sin(a) * r];
+  };
+  const rgbSide = linear(color);
+  const rgbTop = linear(opts.top ?? color);
+  const push = (v: number[][], n: number[], rgb: number[]) => {
+    for (const p of v) {
+      mb.mesh.positions.push(p[0]!, p[1]!, p[2]!);
+      mb.mesh.normals.push(n[0]!, n[1]!, n[2]!);
+      mb.mesh.colors.push(rgb[0]!, rgb[1]!, rgb[2]!);
+    }
+  };
+  const slope = (radius - r1) / height;
+  for (let i = 0; i < sides; i++) {
+    const a = at(radius, i, y0);
+    const b = at(radius, i + 1, y0);
+    const c = at(r1, i + 1, y1);
+    const d = at(r1, i, y1);
+    const mid = ((i + 0.5) / sides) * Math.PI * 2;
+    const n = [Math.cos(mid), slope, Math.sin(mid)];
+    const len = Math.hypot(n[0]!, n[1]!, n[2]!);
+    const nn = n.map((x) => x / len);
+    // Counter-clockwise seen from outside.
+    push([a, d, c, a, c, b], nn, rgbSide);
+    if (r1 > 0) push([[cx, y1, cz], c, d], [0, 1, 0], rgbTop);
+  }
+}
