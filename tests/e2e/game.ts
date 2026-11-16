@@ -37,7 +37,7 @@ export function watchErrors(page: Page): string[] {
 export async function openGame(page: Page, query: string) {
   await page.goto(`./?${query}`);
   await expect(page.locator('#screen h1')).toHaveText('REAL COP 2');
-  await expect(page.locator('#screen')).toContainText('Click to start');
+  await expect(page.locator('#screen')).toContainText('CLICK TO START');
   const g = hooks(page);
   await g.hold(true);
   return g;

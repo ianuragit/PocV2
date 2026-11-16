@@ -4,7 +4,7 @@ import { openGame, snap, watchErrors } from './game';
 test.describe('firing range (M2 acceptance)', () => {
   test('points are right per hit zone through real clicks', async ({ page }) => {
     const errors = watchErrors(page);
-    const g = await openGame(page, 'stage=range&seed=42&debug=1');
+    const g = await openGame(page, 'stage=range&seed=42&test=1');
     await g.start();
     // Travel (30 steps) plus the first two grunts' entries.
     await g.stepFrames(30 + 24 + 30);
@@ -34,7 +34,7 @@ test.describe('firing range (M2 acceptance)', () => {
     await g.stepFrames(200);
     const rings = await g.rings();
     expect(rings.length).toBe(3);
-    await snap(page, 'range-mid-wave');
+    await snap(page, 'range-mid-wave-debug');
 
     // A shot at the centre of each drawn ring must hit the enemy that ring belongs to.
     for (const ring of rings) {
@@ -45,9 +45,20 @@ test.describe('firing range (M2 acceptance)', () => {
     expect(errors).toEqual([]);
   });
 
+  test('clean gameplay screenshot mid-wave, with a hit spark', async ({ page }) => {
+    const g = await openGame(page, 'stage=range&seed=42&test=1&god=1');
+    await g.start();
+    await g.stepFrames(200);
+    const target = (await g.state()).actors.find((a) => a.phase === 'aiming')!;
+    const p = (await g.zoneScreen(target.id, 'head'))!;
+    await g.fireAt(p.x, p.y);
+    await g.stepFrames(1);
+    await snap(page, 'range-mid-wave');
+  });
+
   test('a wave of 5 beats a slow player, then results and replay', async ({ page }) => {
     const errors = watchErrors(page);
-    const g = await openGame(page, 'stage=range&seed=42&debug=1');
+    const g = await openGame(page, 'stage=range&seed=42&test=1');
     await g.start();
     await g.stepFrames(3000);
     const state = await g.state();
@@ -64,7 +75,7 @@ test.describe('firing range (M2 acceptance)', () => {
   });
 
   test('border-zone click and right click reload; P pauses', async ({ page }) => {
-    const g = await openGame(page, 'stage=range&seed=42&debug=1');
+    const g = await openGame(page, 'stage=range&seed=42&test=1');
     await g.start();
     await g.stepFrames(40);
     await g.fireAt(640, 360);
@@ -89,7 +100,7 @@ test.describe('firing range (M2 acceptance)', () => {
 
   test('title screenshot; no debug hooks in a production build without debug=1', async ({ page }) => {
     await page.goto('./?stage=1&seed=42');
-    await expect(page.locator('#screen')).toContainText('Click to start');
+    await expect(page.locator('#screen')).toContainText('CLICK TO START');
     expect(await page.evaluate(() => '__game' in window)).toBe(false);
     await snap(page, 'title');
   });

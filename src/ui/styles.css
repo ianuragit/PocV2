@@ -1,10 +1,14 @@
 :root {
   --bg: #050608;
-  --fg: #f3f5f7;
-  --accent: #ffcc1a;
-  --danger: #ff3b30;
-  --muted: #8a93a0;
-  --panel: rgba(8, 10, 14, 0.72);
+  --fg: #f7f8fa;
+  --accent: #ffc21a;
+  --accent-2: #ff6a1a;
+  --danger: #ff3355;
+  --cool: #36e0ff;
+  --muted: #9aa3ad;
+  --ink: #0b0d12;
+  /* Chunky arcade lettering from system fonts: heavy, slightly italic, with a hard outline. */
+  --arcade: 'Arial Black', 'Arial Bold', 'Helvetica Neue', system-ui, sans-serif;
 }
 
 * {
@@ -48,6 +52,11 @@ body {
   height: 100%;
 }
 
+/* The 3D scene renders at a low line count; scale it up with hard pixels. */
+#game {
+  image-rendering: pixelated;
+}
+
 #overlay,
 #hud,
 #flash,
@@ -59,128 +68,168 @@ body {
   display: none !important;
 }
 
+.arcade,
+#hud,
+.screen h1,
+.screen h2,
+.screen .stats,
+.popup {
+  font-family: var(--arcade);
+  font-weight: 900;
+  font-style: italic;
+  -webkit-text-stroke: 0.25cqh var(--ink);
+  paint-order: stroke fill;
+}
+
 /* ---------- HUD ---------- */
 
 #hud {
   position: absolute;
   inset: 0;
-  font-weight: 800;
-  text-shadow:
-    0 0.15cqh 0 #000,
-    0 0 0.6cqh #000;
+  text-shadow: 0.35cqh 0.35cqh 0 var(--ink);
 }
 
 .hud-score {
   position: absolute;
-  left: 3cqh;
-  top: 2.5cqh;
-  font-size: 5cqh;
+  left: 2.5cqh;
+  top: 2cqh;
+  padding: 0.8cqh 1.8cqh 1cqh 1.4cqh;
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0.75), rgba(11, 13, 18, 0.45));
+  border-left: 0.8cqh solid var(--accent);
+  transform: skewX(-10deg);
+}
+
+.hud-score .label {
+  display: block;
+  font-size: 2.2cqh;
+  color: var(--cool);
+  letter-spacing: 0.2em;
+}
+
+#score {
+  display: block;
+  font-size: 5.6cqh;
+  line-height: 1;
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
 }
 
 #combo {
-  margin-left: 1.5cqh;
-  font-size: 3.4cqh;
-  color: var(--accent);
+  font-size: 2.6cqh;
+  color: var(--accent-2);
+  min-height: 1em;
 }
 
 .hud-lives {
   position: absolute;
-  right: 3cqh;
+  right: 2.5cqh;
   top: 2.5cqh;
   display: flex;
-  gap: 0.8cqh;
+  gap: 0.9cqh;
 }
 
 .life {
-  width: 3.2cqh;
-  height: 3.6cqh;
-  background: #4fa3ff;
-  clip-path: polygon(50% 0, 100% 18%, 92% 70%, 50% 100%, 8% 70%, 0 18%);
+  width: 3cqh;
+  height: 3cqh;
+  background: var(--danger);
+  border: 0.4cqh solid var(--ink);
+  transform: rotate(45deg);
+  box-shadow: inset 0.5cqh 0.5cqh 0 rgba(255, 255, 255, 0.35);
 }
 
 .hud-ammo {
   position: absolute;
-  right: 3cqh;
-  bottom: 3cqh;
+  right: 2.5cqh;
+  bottom: 2.5cqh;
   display: flex;
-  gap: 0.7cqh;
+  gap: 0.6cqh;
+  padding: 1cqh;
+  background: rgba(11, 13, 18, 0.55);
+  transform: skewX(-10deg);
 }
 
 .round {
   width: 1.6cqh;
-  height: 5cqh;
-  border-radius: 0.8cqh 0.8cqh 0.2cqh 0.2cqh;
-  background: linear-gradient(#ffd66b 0 30%, #c9922b 30%);
-  box-shadow: 0 0 0.4cqh #000;
+  height: 5.2cqh;
+  border-radius: 0.8cqh 0.8cqh 0.1cqh 0.1cqh;
+  background: linear-gradient(90deg, #ffe58a 0 35%, #e0a526 35% 75%, #a8761a 75%);
+  border: 0.25cqh solid var(--ink);
 }
 
 .round.spent {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .hud-reload {
   position: absolute;
-  right: 3cqh;
-  bottom: 9.5cqh;
-  font-size: 3.4cqh;
+  right: 2.5cqh;
+  bottom: 11cqh;
+  font-size: 4.2cqh;
   color: var(--danger);
-  animation: blink 0.5s steps(2, start) infinite;
+  animation: blink 0.4s steps(2, start) infinite;
 }
 
 .hud-banner {
   position: absolute;
-  inset: 40% 0 auto;
+  inset: 38% 0 auto;
   text-align: center;
-  font-size: 8cqh;
-  font-style: italic;
+  font-size: 10cqh;
   color: var(--accent);
+  letter-spacing: 0.06em;
   opacity: 0;
-  transition: opacity 0.2s;
+  transform: scale(1.4);
+  transition:
+    opacity 0.12s,
+    transform 0.12s;
 }
 
 .hud-banner.show {
   opacity: 1;
+  transform: scale(1);
 }
 
 #flash {
   position: absolute;
   inset: 0;
-  background: var(--danger);
   opacity: 0;
 }
 
 #flash.hit {
-  animation: flash 0.35s ease-out;
+  animation: flash 0.35s linear;
 }
 
 @keyframes flash {
-  from {
-    opacity: 0.45;
+  0% {
+    background: #fff;
+    opacity: 0.7;
   }
-  to {
+  20% {
+    background: var(--danger);
+    opacity: 0.5;
+  }
+  100% {
+    background: var(--danger);
     opacity: 0;
   }
 }
 
 .popup {
   position: absolute;
-  transform: translate(-50%, -100%);
-  font-size: 3cqh;
-  font-weight: 900;
+  transform: translate(-50%, -120%);
+  font-size: 3.4cqh;
   color: var(--accent);
-  text-shadow: 0 0.15cqh 0 #000;
-  animation: rise 0.7s ease-out forwards;
+  animation: rise 0.6s steps(6) forwards;
 }
 
 .popup.bad {
-  color: #6fb6ff;
+  color: #8cc8ff;
 }
 
 @keyframes rise {
   to {
-    transform: translate(-50%, -260%);
+    transform: translate(-50%, -300%);
     opacity: 0;
   }
 }
@@ -194,48 +243,62 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2cqh;
+  gap: 2.4cqh;
   cursor: pointer;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.7));
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 0.4cqh, transparent 0.4cqh 0.8cqh),
+    radial-gradient(ellipse at center, rgba(11, 13, 18, 0.2), rgba(11, 13, 18, 0.75));
 }
 
-.screen h1 {
+.screen h1.logo {
   margin: 0;
-  font-size: 13cqh;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  color: var(--accent);
-  text-shadow: 0 0.06em 0 #a33;
+  font-size: 15cqh;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  -webkit-text-stroke: 0.9cqh var(--ink);
+  background: linear-gradient(180deg, #fff6c2 0%, var(--accent) 45%, var(--accent-2) 55%, #c22b12 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0.8cqh 0.8cqh 0 var(--ink));
+  transform: skewX(-8deg);
 }
 
 .screen h2 {
   margin: 0;
-  font-size: 9cqh;
-  font-weight: 900;
-  font-style: italic;
+  font-size: 11cqh;
   color: var(--accent);
-  text-shadow: 0 0.06em 0 #a33;
+  -webkit-text-stroke: 0.6cqh var(--ink);
+  filter: drop-shadow(0.6cqh 0.6cqh 0 var(--ink));
+  transform: skewX(-8deg);
 }
 
 .screen p {
   margin: 0;
-  font-size: 3.4cqh;
+  font-size: 3.6cqh;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-shadow: 0.3cqh 0.3cqh 0 var(--ink);
 }
 
 .screen .stats {
-  font-size: 4cqh;
+  font-size: 4.6cqh;
   font-variant-numeric: tabular-nums;
   text-align: center;
   line-height: 1.5;
+  color: var(--fg);
+  text-shadow: 0.4cqh 0.4cqh 0 var(--ink);
 }
 
 .screen .controls {
-  font-size: 2.4cqh;
+  font-size: 2.2cqh;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   color: var(--muted);
 }
 
 .blink {
-  animation: blink 1.2s steps(2, start) infinite;
+  animation: blink 1s steps(2, start) infinite;
 }
 
 @keyframes blink {

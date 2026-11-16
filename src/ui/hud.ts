@@ -23,8 +23,9 @@ export class Hud {
 
   update(state: GameState, dt: number): void {
     const s = state.score;
-    if (s.score !== this.last.score) this.score.textContent = s.score.toLocaleString('en-US');
-    if (s.multiplier !== this.last.mult) this.combo.textContent = s.multiplier > 1 ? `x${s.multiplier}` : '';
+    if (s.score !== this.last.score) this.score.textContent = String(s.score).padStart(7, '0');
+    if (s.multiplier !== this.last.mult)
+      this.combo.textContent = s.multiplier > 1 ? `COMBO x${s.multiplier}` : '';
     if (state.lives !== this.last.lives) {
       this.lives.replaceChildren(...Array.from({ length: state.lives }, () => el('div', 'life')));
     }
