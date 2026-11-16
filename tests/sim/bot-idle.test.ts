@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { newGame, readJson } from '../helpers';
-import { runIdleBot } from './bots';
+import { newGame, readJson } from '../helpers.ts';
+import { runIdleBot } from './bots.ts';
 
 describe('idle bot on stage 1', () => {
   it('reaches game over at a known step on Normal', () => {
@@ -28,11 +28,13 @@ describe('idle bot on stage 1', () => {
 });
 
 /**
- * Hand-checked timeline (Normal, seed 42): arrive at stop 0 on step 30; grunt 1's 2.0 s ring
- * runs 47..166 and hits; grunt 2's 1.8 s ring is held 30 steps by the ring pause and hits at 250;
- * re-aims (+-10% jitter) hit at 348, 417 and 536.
+ * Hand-checked timeline (Normal, seed 42): 10 m of rail at 4 m/s arrives at stop 0 on step 150.
+ * The newsstand grunt leans out for 0.3 s (ring starts 167) and its 2.0 s ring hits on 286. The
+ * runner spawns at 0.6 s (186), runs in for 0.8 s (ring starts 233), and its 1.5 s ring, held 30
+ * steps by the ring pause, hits on 352. Re-aims (+-10% jitter) hit on 468, 594 and 656; one
+ * closing at 501 falls inside invulnerability and misses.
  */
-const IDLE_GAME_OVER_FRAME = 536;
+const IDLE_GAME_OVER_FRAME = 656;
 
 describe('idle bot on the firing range', () => {
   it('a wave of 5 beats a player who never shoots', () => {

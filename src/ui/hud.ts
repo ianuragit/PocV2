@@ -1,5 +1,5 @@
-import type { GameEvent, GameState } from '../sim';
-import type { ScreenPoint } from '../view/overlay';
+import type { GameEvent, GameState } from '../sim/index.ts';
+import type { ScreenPoint } from '../view/overlay.ts';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 

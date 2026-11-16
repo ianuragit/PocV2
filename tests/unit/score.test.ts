@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { bonusLivesCrossed, breakCombo, createScore, multiplierFor, registerHit } from '../../src/sim/score';
-import { tuning } from '../helpers';
+import {
+  bonusLivesCrossed,
+  breakCombo,
+  createScore,
+  multiplierFor,
+  registerHit,
+} from '../../src/sim/score.ts';
+import { tuning } from '../helpers.ts';
 
 const scoring = tuning().scoring;
 

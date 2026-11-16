@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { createRng } from '../../src/sim/rng';
-import { advanceRings, promoteWaiting, ringsOf } from '../../src/sim/rings';
-import { vec } from '../../src/sim/vec';
-import type { Actor } from '../../src/sim/types';
-import { tuning } from '../helpers';
+import { createRng } from '../../src/sim/rng.ts';
+import { advanceRings, promoteWaiting, ringsOf } from '../../src/sim/rings.ts';
+import { vec } from '../../src/sim/vec.ts';
+import type { Actor } from '../../src/sim/types.ts';
+import { tuning } from '../helpers.ts';
 
 const waiting = (id: number, queuedAt = 0, shots = 0): Actor => ({
   id,

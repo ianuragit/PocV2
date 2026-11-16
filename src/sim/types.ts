@@ -1,4 +1,4 @@
-import type { Vec3 } from './vec';
+import type { Vec3 } from './vec.ts';
 
 // ---------- Data files ----------
 

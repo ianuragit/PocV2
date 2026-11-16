@@ -13,7 +13,9 @@
     "test": "vitest run",
     "coverage": "vitest run --coverage",
     "test:e2e": "playwright test --trace off",
-    "validate": "node tools/validate.mjs && vitest run tests/data",
+    "validate": "node tools/validate.ts",
+    "markers": "node tools/extract-markers.ts",
+    "greybox": "node tools/greybox/stage1.ts && node tools/extract-markers.ts",
     "budget": "node tools/check-size-budget.mjs"
   },
   "dependencies": {

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { createGame } from '../../src/sim/game';
-import { hitZones } from '../../src/sim/shots';
-import { vec, type Vec3 } from '../../src/sim/vec';
-import type { Difficulty, GameEvent, Markers, SpawnDef, Tuning } from '../../src/sim/types';
-import { aimAt, bodyCenter, newGame, runUntil, tuning } from '../helpers';
+import { createGame } from '../../src/sim/game.ts';
+import { hitZones } from '../../src/sim/shots.ts';
+import { vec, type Vec3 } from '../../src/sim/vec.ts';
+import type { Difficulty, GameEvent, Markers, SpawnDef, Tuning } from '../../src/sim/types.ts';
+import { aimAt, bodyCenter, newGame, runUntil, tuning } from '../helpers.ts';
 
 const P = (x: number, y: number, z: number, yaw = 0) => ({
   position: [x, y, z] as [number, number, number],
@@ -271,9 +271,9 @@ describe('game flow', () => {
   it('can start at a later stop for debugging', () => {
     const game = newGame({ startStop: 3 });
     expect(game.state.stop).toBe(3);
-    expect(game.state.camera.pathOffset).toBe(18);
+    expect(game.state.camera.pathOffset).toBe(36);
     expect(runUntil(game, (e) => e.type === 'StopReached')).toContainEqual({ type: 'StopReached', stop: 3 });
-    expect(() => newGame({ startStop: 5 })).toThrow(/startStop/);
+    expect(() => newGame({ startStop: 9 })).toThrow(/startStop/);
     expect(() => newGame({ startStop: 1.5 })).toThrow(/startStop/);
   });
 

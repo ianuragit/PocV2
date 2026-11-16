@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { newGame, tuning } from '../helpers';
-import { runClearingBot, runIdleBot } from './bots';
+import { newGame, tuning } from '../helpers.ts';
+import { runClearingBot, runIdleBot } from './bots.ts';
 
 describe('determinism', () => {
   it('the same seed and inputs give identical event logs', () => {

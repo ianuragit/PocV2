@@ -1,6 +1,6 @@
-import { pathFromMarkers, pathMarkerNames, type RailPath } from './path';
-import { add, fromArray, scale, sub, vec, type Vec3 } from './vec';
-import type { Markers, StageDef, Tuning } from './types';
+import { pathFromMarkers, pathMarkerNames, type RailPath } from './path.ts';
+import { add, fromArray, scale, sub, vec, type Vec3 } from './vec.ts';
+import type { Markers, StageDef, Tuning } from './types.ts';
 
 export interface Box {
   name: string;

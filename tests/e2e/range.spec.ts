@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openGame, snap, watchErrors } from './game';
+import { openGame, snap, watchErrors } from './game.ts';
 
 test.describe('firing range (M2 acceptance)', () => {
   test('points are right per hit zone through real clicks', async ({ page }) => {

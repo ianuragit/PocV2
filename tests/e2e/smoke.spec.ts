@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openGame, watchErrors } from './game';
+import { openGame, watchErrors } from './game.ts';
 
 test('boots to the title, starts on click, and clears stop 1 of stage 1', async ({ page }) => {
   const errors = watchErrors(page);

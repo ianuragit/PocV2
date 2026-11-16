@@ -14,24 +14,30 @@ import {
   SphereGeometry,
   Color,
 } from 'three';
-import type { ResolvedStage } from '../sim/stage';
-import { PALETTE, SKY } from './style';
+import type { ResolvedStage } from '../sim/stage.ts';
+import { PALETTE, SKY } from './style.ts';
 
 const TILE = 2;
 const WALL_GAP = 4; // metres between the play area and the side walls
 const WALL_HEIGHT = 5;
 
 /**
- * Procedural set dressing in the arcade style: sky dome, checker floor, side walls with a stripe,
- * columns, benches and bins. Props sit outside the play area (path, spawns, cover) so they never
- * block a shot. A stage .glb replaces this in M3.
+ * The stage's surroundings. A stage with an environment .glb uses it under the sky dome. A procedural
+ * stage (the firing range) gets set dressing in the arcade style: checker floor, side walls with a
+ * stripe, columns, benches and bins, all outside the play area so they never block a shot.
  */
 export function buildStageView(
   stage: ResolvedStage,
   spawnPoints: readonly { x: number; z: number }[],
+  environment: Group | null = null,
 ): Group {
   const root = new Group();
   root.name = 'stage';
+  if (environment) {
+    // A modelled stage brings its own floor, walls and cover; add only the sky.
+    root.add(skyDome(), environment);
+    return root;
+  }
 
   const pts = [...stage.path.points, ...spawnPoints, ...stage.covers.flatMap((c) => [c.min, c.max])];
   const minX = Math.min(...pts.map((p) => p.x)) - WALL_GAP;

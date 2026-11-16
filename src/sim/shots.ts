@@ -1,6 +1,6 @@
-import { add, basis, dot, scale, sub, vec, type Vec3 } from './vec';
-import type { Actor, HitZone, Tuning } from './types';
-import type { Box } from './stage';
+import { add, basis, dot, scale, sub, vec, type Vec3 } from './vec.ts';
+import type { Actor, HitZone, Tuning } from './types.ts';
+import type { Box } from './stage.ts';
 
 export interface Ray {
   origin: Vec3;

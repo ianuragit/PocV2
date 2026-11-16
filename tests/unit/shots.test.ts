@@ -7,10 +7,10 @@ import {
   raySphere,
   rayVerticalCapsule,
   resolveShot,
-} from '../../src/sim/shots';
-import { normalize, sub, vec, type Vec3 } from '../../src/sim/vec';
-import type { Actor } from '../../src/sim/types';
-import { tuning } from '../helpers';
+} from '../../src/sim/shots.ts';
+import { normalize, sub, vec, type Vec3 } from '../../src/sim/vec.ts';
+import type { Actor } from '../../src/sim/types.ts';
+import { tuning } from '../helpers.ts';
 
 const body = tuning().body;
 const ray = (origin: Vec3, toward: Vec3) => ({ origin, direction: normalize(sub(toward, origin)) });

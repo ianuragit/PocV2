@@ -7,8 +7,8 @@ import {
   MeshLambertMaterial,
   type Material,
 } from 'three';
-import type { Tuning } from '../sim';
-import { CIVILIAN_OUTLINE, OUTFITS, type Outfit } from './style';
+import type { Tuning } from '../sim/index.ts';
+import { CIVILIAN_OUTLINE, OUTFITS, type Outfit } from './style.ts';
 
 /**
  * Blocky, flat-shaded characters built from boxes, sized to the simulation's hit zones

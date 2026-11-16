@@ -1,8 +1,8 @@
-import { App } from './app';
-import { installDebugHooks } from './debug/hooks';
-import type { Difficulty } from './sim';
-import { Screens } from './ui/screens';
-import { loadGameData } from './view/data';
+import { App } from './app.ts';
+import { installDebugHooks } from './debug/hooks.ts';
+import type { Difficulty } from './sim/index.ts';
+import { Screens } from './ui/screens.ts';
+import { loadGameData } from './view/data.ts';
 
 const STAGES: Record<string, string> = { '1': 'stage1', stage1: 'stage1', range: 'range' };
 const DIFFICULTIES = new Set<Difficulty>(['easy', 'normal', 'hard']);

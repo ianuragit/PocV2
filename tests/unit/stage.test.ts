@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { resolveStage, validateStage } from '../../src/sim/stage';
-import type { StageDef } from '../../src/sim/types';
-import { stage1, stage1Markers, tuning } from '../helpers';
+import { resolveStage, validateStage } from '../../src/sim/stage.ts';
+import type { StageDef } from '../../src/sim/types.ts';
+import { stage1, stage1Markers, tuning } from '../helpers.ts';
 
 const t = tuning();
 const markers = stage1Markers();
@@ -63,7 +63,7 @@ describe('validateStage', () => {
   it('rejects a wave that holds only civilians', () => {
     const errors = errorsFor((s) => {
       s.scenes[0]!.stops[0]!.waves[0]!.spawns = [
-        { type: 'civilian', marker: 'Spawn_Kiosk', entry: 'appear', delay: 0 },
+        { type: 'civilian', marker: 'Spawn_StreetCivilian', entry: 'appear', delay: 0 },
       ];
     });
     expect(errors).toEqual([
@@ -97,20 +97,28 @@ describe('validateStage', () => {
 describe('resolveStage', () => {
   it('converts seconds to frames and marker names to positions', () => {
     const r = resolveStage(stage1(), markers, t);
-    expect(r.stops).toHaveLength(5);
+    expect(r.stops).toHaveLength(9);
     const second = r.stops[0]!.waves[0]![1]!;
     expect(second).toMatchObject({
-      type: 'grunt',
+      type: 'runner',
       delayFrames: 36,
       entryFrames: 48,
-      aimTime: 1.8,
-      position: { x: 2, y: 0, z: 11 },
+      position: { x: 3, y: 0, z: 16 },
     });
+    expect(second.aimTime).toBeUndefined();
     expect(r.stops[0]!.waves[0]![2]!.civilian).toBe(true);
     expect(r.stops[0]!.stepDistance).toBeCloseTo(4 / 60);
-    expect(r.covers).toEqual([
-      { name: 'Cover_Column', min: { x: -6.5, y: 0, z: 13.5 }, max: { x: -5.5, y: 2, z: 14.5 } },
+    expect(r.covers.map((c) => c.name).sort()).toEqual([
+      'Cover_Barrier',
+      'Cover_Cart',
+      'Cover_CoffeeKiosk',
+      'Cover_CrateStack',
+      'Cover_DepotCrates',
+      'Cover_Newsstand',
     ]);
+    const barrier = r.covers.find((c) => c.name === 'Cover_Barrier')!;
+    expect(barrier.min.x).toBeCloseTo(8.5);
+    expect(barrier.max.y).toBeCloseTo(1.1);
   });
 
   it('gives cover boxes without a scale a unit size', () => {

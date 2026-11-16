@@ -1,6 +1,6 @@
 import { expect, type Page } from '@playwright/test';
-import type { DebugHooks } from '../../src/debug/hooks';
-import type { GameEvent, GameState, HitZone } from '../../src/sim';
+import type { DebugHooks } from '../../src/debug/hooks.ts';
+import type { GameEvent, GameState, HitZone } from '../../src/sim/index.ts';
 
 /** Typed access to window.__game from Playwright. */
 export function hooks(page: Page) {
@@ -21,6 +21,7 @@ export function hooks(page: Page) {
     fireAt: (x: number, y: number) => call<void>('fireAt', x, y),
     zoneScreen: (id: number, zone: HitZone) => call<{ x: number; y: number } | null>('zoneScreen', id, zone),
     rings: () => call<ReturnType<DebugHooks['rings']>>('rings'),
+    skipToStop: (n: number) => call<void>('skipToStop', n),
   };
 }
 

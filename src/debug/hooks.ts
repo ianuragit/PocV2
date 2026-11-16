@@ -1,6 +1,6 @@
-import type { App } from '../app';
-import { hitZones, type GameState, type HitZone } from '../sim';
-import { project, type DrawnRing, type ScreenPoint } from '../view/overlay';
+import type { App } from '../app.ts';
+import { hitZones, type GameState, type HitZone } from '../sim/index.ts';
+import { project, type DrawnRing, type ScreenPoint } from '../view/overlay.ts';
 
 export interface DebugHooks {
   state(): GameState;
@@ -11,7 +11,7 @@ export interface DebugHooks {
   fireAt(x: number, y: number): void;
   reload(): void;
   stepFrames(n: number): unknown[];
-  /** Restart the stage at a stop and keep playing. */
+  /** Restart the stage at a stop (1-based, like the ?stop= URL parameter) and keep playing. */
   skipToStop(n: number): void;
   /** Stop or resume the frame loop's simulation steps (rendering continues). */
   hold(on: boolean): void;
@@ -31,7 +31,7 @@ export function installDebugHooks(app: App): void {
     reload: () => app.input.queueReload(),
     stepFrames: (n) => app.stepFrames(n),
     skipToStop: (n) => {
-      app.newGame(n);
+      app.newGame(n - 1);
       if (app.screens.current !== 'playing') app.start();
     },
     hold: (on) => (app.hold = on),

@@ -8,8 +8,8 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
-import type { Vec3 } from '../sim';
-import { RENDER_LINES, SKY } from './style';
+import type { Vec3 } from '../sim/index.ts';
+import { RENDER_LINES, SKY } from './style.ts';
 
 const LOOK_SMOOTHING = 6; // per second; higher turns the camera faster toward a new look target
 
