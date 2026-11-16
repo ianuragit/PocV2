@@ -1,18 +1,80 @@
 {
   "version": 1,
   "step_hz": 60,
-  "player": { "invulnerable_time": 1.0, "ring_pause_on_hit": 0.5, "bonus_lives_at": [50000, 150000] },
-  "difficulty": {
-    "easy": { "lives": 7, "max_rings": 2, "aim_time_scale": 1.25 },
-    "normal": { "lives": 5, "max_rings": 3, "aim_time_scale": 1.0 },
-    "hard": { "lives": 3, "max_rings": 4, "aim_time_scale": 0.85 }
+  "player": {
+    "invulnerable_time": 1.0,
+    "ring_pause_on_hit": 0.5,
+    "bonus_lives_at": [50000, 150000],
+    "continues": 3,
+    "continue_time": 10
   },
-  "rings": { "start_scale": 3, "end_scale": 1, "reaim_jitter": 0.1, "amber_at": 0.45, "red_at": 0.75 },
-  "revolver": { "capacity": 6, "max_shots_per_second": 8, "reload_time": 0.35 },
-  "scoring": { "gun_hand": 500, "head": 300, "body": 200, "thrown": 100, "combo_step": 3, "combo_cap": 5 },
-  "director": { "wave_gap": 0.5 },
-  "entries": { "appear": 0, "lean_out": 0.3, "stand_up": 0.5, "run_in": 0.8 },
-  "civilian": { "stay_time": 3.0 },
+  "difficulty": {
+    "easy": {
+      "lives": 7,
+      "max_rings": 2,
+      "aim_time_scale": 1.25
+    },
+    "normal": {
+      "lives": 5,
+      "max_rings": 3,
+      "aim_time_scale": 1.0
+    },
+    "hard": {
+      "lives": 3,
+      "max_rings": 4,
+      "aim_time_scale": 0.85
+    }
+  },
+  "rings": {
+    "start_scale": 3,
+    "end_scale": 1,
+    "reaim_jitter": 0.1,
+    "amber_at": 0.45,
+    "red_at": 0.75
+  },
+  "revolver": {
+    "capacity": 6,
+    "max_shots_per_second": 8,
+    "reload_time": 0.35
+  },
+  "specials": {
+    "shotgun": {
+      "capacity": 6,
+      "max_shots_per_second": 2,
+      "pellets": 7,
+      "spread_deg": 3
+    },
+    "machine_pistol": {
+      "capacity": 30,
+      "max_shots_per_second": 12,
+      "auto": true
+    },
+    "magnum": {
+      "capacity": 6,
+      "max_shots_per_second": 3,
+      "pierce": true
+    }
+  },
+  "scoring": {
+    "gun_hand": 500,
+    "head": 300,
+    "body": 200,
+    "thrown": 100,
+    "combo_step": 3,
+    "combo_cap": 5
+  },
+  "director": {
+    "wave_gap": 0.5
+  },
+  "entries": {
+    "appear": 0,
+    "lean_out": 0.3,
+    "stand_up": 0.5,
+    "run_in": 0.8
+  },
+  "civilian": {
+    "stay_time": 3.0
+  },
   "body": {
     "height": 1.8,
     "body_bottom": 0.25,
@@ -24,8 +86,56 @@
     "hand_radius": 0.1
   },
   "enemies": {
-    "grunt": { "aim_time": 2.0, "hits": 1 },
-    "runner": { "aim_time": 1.5, "hits": 1 },
-    "heavy": { "aim_time": 2.8, "hits": 3 }
+    "grunt": {
+      "aim_time": 2.0,
+      "hits": 1
+    },
+    "runner": {
+      "aim_time": 1.5,
+      "hits": 1
+    },
+    "heavy": {
+      "aim_time": 2.8,
+      "hits": 3
+    },
+    "thrower": {
+      "aim_time": 2.0,
+      "hits": 1,
+      "attack": "throw",
+      "flight_time": 2.5
+    },
+    "shield": {
+      "aim_time": 2.2,
+      "hits": 1,
+      "shield": true
+    },
+    "vehicle": {
+      "aim_time": 1.8,
+      "hits": 1
+    }
+  },
+  "boss": {
+    "phases": [
+      {
+        "hits": 8,
+        "aim_time": 2.2
+      },
+      {
+        "hits": 8,
+        "aim_time": 1.8
+      },
+      {
+        "hits": 8,
+        "aim_time": 1.6
+      }
+    ],
+    "move_time": 1.0,
+    "bonus": 10000
+  },
+  "crate": {
+    "half_extents": [0.4, 0.4, 0.4]
+  },
+  "projectile": {
+    "radius": 0.3
   }
 }

@@ -6,9 +6,11 @@ import {
   rayBox,
   raySphere,
   rayVerticalCapsule,
-  resolveShot,
+  traceRay,
+  crateBox,
+  pelletDirections,
 } from '../../src/sim/shots.ts';
-import { normalize, sub, vec, type Vec3 } from '../../src/sim/vec.ts';
+import { dot, length, normalize, sub, vec, type Vec3 } from '../../src/sim/vec.ts';
 import type { Actor } from '../../src/sim/types.ts';
 import { tuning } from '../helpers.ts';
 
@@ -17,6 +19,7 @@ const ray = (origin: Vec3, toward: Vec3) => ({ origin, direction: normalize(sub(
 const actor = (over: Partial<Actor> = {}): Actor => ({
   id: 1,
   type: 'grunt',
+  role: 'enemy',
   civilian: false,
   position: vec(0, 0, 10),
   yaw: Math.PI,
@@ -76,34 +79,88 @@ describe('hit zones', () => {
   });
 });
 
-describe('resolveShot', () => {
+const t = tuning();
+
+describe('traceRay', () => {
   it('hits the nearest actor', () => {
     const near = actor({ id: 1, position: vec(0, 0, 6) });
     const far = actor({ id: 2, position: vec(0, 0, 12) });
-    const hit = resolveShot(ray(eye, vec(0, 0.8, 12)), [far, near], [], body);
-    expect(hit.kind === 'actor' && hit.actor.id).toBe(1);
+    const [hit] = traceRay(ray(eye, vec(0, 0.8, 12)), [far, near], [], t);
+    expect(hit?.kind === 'actor' && hit.actor.id).toBe(1);
   });
 
   it('is blocked by cover in front of the target', () => {
     const cover = { name: 'Cover_Wall', min: vec(-1, 0, 4), max: vec(1, 2, 5) };
-    const hit = resolveShot(ray(eye, vec(0, 0.8, 10)), [actor()], [cover], body);
-    expect(hit).toMatchObject({ kind: 'cover', name: 'Cover_Wall' });
+    expect(traceRay(ray(eye, vec(0, 0.8, 10)), [actor()], [cover], t)).toEqual([
+      expect.objectContaining({ kind: 'cover', name: 'Cover_Wall' }),
+    ]);
   });
 
   it('ignores cover behind the target, and resolved actors', () => {
     const cover = { name: 'Cover_Back', min: vec(-1, 0, 14), max: vec(1, 2, 15) };
-    expect(resolveShot(ray(eye, vec(0, 0.8, 10)), [actor()], [cover], body).kind).toBe('actor');
-    expect(resolveShot(ray(eye, vec(0, 0.8, 10)), [actor({ phase: 'dead' })], [], body).kind).toBe('none');
+    expect(traceRay(ray(eye, vec(0, 0.8, 10)), [actor()], [cover], t)[0]?.kind).toBe('actor');
+    expect(traceRay(ray(eye, vec(0, 0.8, 10)), [actor({ phase: 'dead' })], [], t)).toEqual([]);
   });
 
-  it('only living, present actors are hittable', () => {
-    expect(
-      ['entering', 'waiting', 'aiming', 'standing'].every((p) =>
-        isHittable(actor({ phase: p as Actor['phase'] })),
-      ),
-    ).toBe(true);
-    expect(['dead', 'disarmed', 'fled'].some((p) => isHittable(actor({ phase: p as Actor['phase'] })))).toBe(
-      false,
-    );
+  it('pierces cover and every actor on the line when asked', () => {
+    const cover = { name: 'Cover_Wall', min: vec(-1, 0, 4), max: vec(1, 2, 5) };
+    const a = actor({ id: 1, position: vec(0, 0, 8) });
+    const b = actor({ id: 2, position: vec(0, 0, 12) });
+    const hits = traceRay(ray(eye, vec(0, 0.8, 12)), [b, a], [cover], t, true);
+    expect(hits.map((h) => (h.kind === 'actor' ? h.actor.id : h.kind))).toEqual([1, 2]);
+  });
+
+  it('a shield blocks body shots from the front but not from behind, and the magnum pierces it', () => {
+    const s = actor({ type: 'shield' });
+    expect(traceRay(ray(eye, vec(0, 0.8, 10)), [s], [], t)[0]?.kind).toBe('shield');
+    expect(traceRay(ray(eye, hitZones(s, t.body).head.center), [s], [], t)[0]).toMatchObject({
+      zone: 'head',
+    });
+    const behind = actor({ type: 'shield', yaw: 0 });
+    expect(traceRay(ray(eye, vec(0, 0.8, 10)), [behind], [], t)[0]).toMatchObject({
+      kind: 'actor',
+      zone: 'body',
+    });
+    expect(traceRay(ray(eye, vec(0, 0.8, 10)), [s], [], t, true)[0]).toMatchObject({
+      kind: 'actor',
+      zone: 'body',
+    });
+  });
+
+  it('hits crates as boxes and thrown objects as spheres', () => {
+    const crate = actor({ role: 'crate', type: 'crate', phase: 'standing', position: vec(0, 0, 6) });
+    expect(crateBox(crate, t).max.y).toBeCloseTo(0.8);
+    expect(traceRay(ray(eye, vec(0, 0.4, 6)), [crate], [], t)[0]).toMatchObject({
+      kind: 'actor',
+      zone: 'body',
+    });
+    const p = actor({ role: 'projectile', type: 'projectile', phase: 'flying', position: vec(0, 1.6, 5) });
+    expect(traceRay(ray(eye, vec(0, 1.6, 5)), [p], [], t)[0]).toMatchObject({ zone: 'thrown' });
+    expect(traceRay(ray(eye, vec(1, 1.6, 5)), [p], [], t)).toEqual([]);
+  });
+
+  it('only present actors are hittable', () => {
+    const live = ['entering', 'waiting', 'aiming', 'standing', 'flying'] as const;
+    const gone = ['dead', 'disarmed', 'fled', 'opened', 'moving'] as const;
+    expect(live.every((p) => isHittable(actor({ phase: p })))).toBe(true);
+    expect(gone.some((p) => isHittable(actor({ phase: p })))).toBe(false);
+  });
+});
+
+describe('pelletDirections', () => {
+  it('is the aim alone for a single pellet', () => {
+    expect(pelletDirections(vec(0, 0, 2), 1, 0.1)).toEqual([vec(0, 0, 1)]);
+  });
+
+  it('puts one pellet on the aim and the rest evenly on a cone of the given half-angle', () => {
+    const dirs = pelletDirections(vec(0, 0, 1), 7, 0.05);
+    expect(dirs).toHaveLength(7);
+    expect(dirs[0]).toEqual(vec(0, 0, 1));
+    for (const d of dirs.slice(1)) {
+      expect(length(d)).toBeCloseTo(1);
+      expect(Math.acos(dot(d, vec(0, 0, 1)))).toBeCloseTo(0.05, 4);
+    }
+    // Also works aiming straight up (the helper axis switches).
+    expect(pelletDirections(vec(0, 1, 0), 3, 0.1)).toHaveLength(3);
   });
 });

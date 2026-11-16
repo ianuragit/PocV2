@@ -1,44 +1,143 @@
-export type ScreenName = 'loading' | 'title' | 'playing' | 'paused' | 'results' | 'error';
+import type { Difficulty, Rank } from '../sim/index.ts';
+import type { ScoreEntry } from '../save/saveStore.ts';
+
+export type ScreenName =
+  'loading' | 'title' | 'playing' | 'paused' | 'continue' | 'results' | 'scores' | 'options' | 'error';
+
+export interface ScreenData {
+  difficulty?: Difficulty;
+  best?: number;
+  score?: number;
+  cleared?: boolean;
+  rank?: Rank;
+  accuracy?: number;
+  continuesUsed?: number;
+  continuesLeft?: number;
+  seconds?: number;
+  askInitials?: boolean;
+  stageName?: string;
+  table?: ScoreEntry[];
+  highlight?: number;
+  reducedFlash?: boolean;
+  status?: string;
+  message?: string;
+}
 
 const CONTROLS =
   'Click to shoot · Right click, R, Space or the screen edge to reload · F fullscreen · P pause';
+const DIFFS: Difficulty[] = ['easy', 'normal', 'hard'];
 
-/** Title, pause, results and error screens: one element, rewritten per screen. */
+/** What a click on a screen's background does (buttons carry their own data-action). */
+export const DEFAULT_ACTION: Partial<Record<ScreenName, string>> = {
+  title: 'start',
+  paused: 'resume',
+  continue: 'continue',
+  results: 'done',
+  scores: 'title',
+};
+
+const pad = (n: number) => String(n).padStart(7, '0');
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+const btn = (action: string, label: string, extra = '') =>
+  `<button type="button" class="btn ${extra}" data-action="${action}">${label}</button>`;
+
+/** Title, pause, continue, results, high scores, options and error screens: one element, rewritten per screen. */
 export class Screens {
-  private readonly root = document.getElementById('screen')!;
+  readonly root = document.getElementById('screen')!;
   current: ScreenName = 'loading';
+  /** False while the results screen waits for initials: background clicks must not skip the entry. */
+  backgroundClicks = true;
 
-  show(
-    name: ScreenName,
-    data: { score?: number; cleared?: boolean; accuracy?: number; message?: string } = {},
-  ): void {
+  show(name: ScreenName, d: ScreenData = {}): void {
     this.current = name;
+    this.backgroundClicks = true;
     document.getElementById('stage')!.classList.toggle('playing', name === 'playing');
     this.root.classList.toggle('hidden', name === 'playing');
-    switch (name) {
-      case 'loading':
-        this.root.innerHTML = `<h1 class="logo">REAL COP 2</h1><p class="blink">Loading…</p>`;
-        break;
-      case 'title':
-        this.root.innerHTML = `<h1 class="logo">REAL COP 2</h1><p class="blink">CLICK TO START</p><p class="controls">${CONTROLS}</p>`;
-        break;
-      case 'paused':
-        this.root.innerHTML = `<h2>PAUSED</h2><p class="blink">CLICK TO RESUME</p><p class="controls">${CONTROLS}</p>`;
-        break;
-      case 'results':
-        this.root.innerHTML = `<h2>${data.cleared ? 'STAGE CLEAR' : 'GAME OVER'}</h2>
-          <div class="stats">SCORE ${String(data.score ?? 0).padStart(7, '0')}<br>HIT RATE ${data.accuracy ?? 0}%</div>
-          <p class="blink">CLICK TO PLAY AGAIN</p>`;
-        break;
-      case 'error':
-        this.root.innerHTML = `<h2>Something went wrong</h2><p>${escapeHtml(data.message ?? '')}</p>`;
-        break;
-      case 'playing':
-        break;
+    this.root.dataset.screen = name;
+    this.root.innerHTML = this.render(name, d);
+    if (name === 'results' && d.askInitials) {
+      this.backgroundClicks = false;
+      const input = this.root.querySelector<HTMLInputElement>('#initials');
+      input?.focus();
     }
   }
-}
 
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+  /** Updates the continue countdown without rebuilding the screen. */
+  setCountdown(seconds: number): void {
+    const el = this.root.querySelector('#continue-count');
+    if (el && el.textContent !== String(seconds)) el.textContent = String(seconds);
+  }
+
+  private render(name: ScreenName, d: ScreenData): string {
+    switch (name) {
+      case 'loading':
+        return `<h1 class="logo">REAL COP 2</h1><p class="blink">Loading…</p>`;
+      case 'title':
+        return `<h1 class="logo">REAL COP 2</h1>
+          <p class="blink">CLICK TO START</p>
+          <div class="menu">
+            ${btn('difficulty', `DIFFICULTY: ${(d.difficulty ?? 'normal').toUpperCase()}`)}
+            ${btn('scores', 'HIGH SCORES')}
+            ${btn('options', 'OPTIONS')}
+            ${btn('fullscreen', 'FULLSCREEN')}
+          </div>
+          ${d.best ? `<p class="small">BEST ${pad(d.best)}</p>` : ''}
+          <p class="controls">${CONTROLS}</p>`;
+      case 'paused':
+        return `<h2>PAUSED</h2><p class="blink">CLICK TO RESUME</p><p class="controls">${CONTROLS}</p>`;
+      case 'continue':
+        return `<h2>CONTINUE?</h2>
+          <div class="countdown" id="continue-count">${d.seconds ?? 10}</div>
+          <p class="small">CONTINUES LEFT ${d.continuesLeft ?? 0} · YOUR SCORE STARTS AGAIN FROM ZERO</p>
+          <div class="menu">${btn('continue', 'CONTINUE', 'primary')}${btn('giveup', 'GIVE UP')}</div>`;
+      case 'results': {
+        const rank = d.cleared && d.rank ? `<div class="rank rank-${d.rank}">${d.rank}</div>` : '';
+        const entry = d.askInitials
+          ? `<form class="initials" data-form="initials">
+              <label for="initials">NEW HIGH SCORE! ENTER YOUR INITIALS</label>
+              <input id="initials" maxlength="3" autocomplete="off" spellcheck="false" />
+              ${btn('submit-initials', 'OK', 'primary')}
+            </form>`
+          : `<p class="blink">CLICK TO CONTINUE</p>`;
+        return `<h2>${d.cleared ? 'STAGE CLEAR' : 'GAME OVER'}</h2>
+          ${rank}
+          <div class="stats">SCORE ${pad(d.score ?? 0)}<br>HIT RATE ${d.accuracy ?? 0}%${
+            d.continuesUsed ? `<br>CONTINUES ${d.continuesUsed}` : ''
+          }</div>
+          ${entry}`;
+      }
+      case 'scores': {
+        const rows = (d.table ?? [])
+          .map(
+            (e, i) =>
+              `<tr class="${i === d.highlight ? 'me' : ''}"><td>${i + 1}</td><td>${esc(e.initials)}</td><td>${pad(e.score)}</td><td>${e.rank}</td></tr>`,
+          )
+          .join('');
+        const tabs = DIFFS.map((x) =>
+          btn(`scores-${x}`, x.toUpperCase(), x === d.difficulty ? 'on' : ''),
+        ).join('');
+        return `<h2>HIGH SCORES</h2>
+          <p class="small">${esc(d.stageName ?? '')}</p>
+          <div class="menu tabs">${tabs}</div>
+          <table class="table">${rows || '<tr><td colspan="4">NO SCORES YET</td></tr>'}</table>
+          <p class="blink">CLICK TO CONTINUE</p>`;
+      }
+      case 'options': {
+        const diffs = DIFFS.map((x) => btn(`set-${x}`, x.toUpperCase(), x === d.difficulty ? 'on' : '')).join(
+          '',
+        );
+        return `<h2>OPTIONS</h2>
+          <div class="option"><span>DIFFICULTY</span><div class="menu">${diffs}</div></div>
+          <div class="option"><span>REDUCED FLASH</span>${btn('flash', d.reducedFlash ? 'ON' : 'OFF', d.reducedFlash ? 'on' : '')}</div>
+          <div class="option"><span>SAVE DATA</span><div class="menu">${btn('export', 'EXPORT')}${btn('import', 'IMPORT')}</div></div>
+          <input type="file" id="import-file" accept="application/json,.json" hidden />
+          <p class="small" id="options-status">${esc(d.status ?? '')}</p>
+          ${btn('title', 'BACK', 'primary')}`;
+      }
+      case 'error':
+        return `<h2>Something went wrong</h2><p>${esc(d.message ?? '')}</p>`;
+      case 'playing':
+        return '';
+    }
+  }
 }

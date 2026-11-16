@@ -9,6 +9,7 @@ Design: docs/design.md. Build spec: docs/spec.md.
 - All checks: npm run lint && npm run typecheck && npm run validate && npm test
 - Build: npm run build && npm run budget
 - Browser test: npm run test:e2e (screenshots land in test-results/, incl. a tour of every stage 1 stop)
+  - If the installed Chromium does not match @playwright/test, set PW_CHROMIUM_PATH to its binary
 - Stage 1 greybox: npm run greybox (writes public/assets/stages/stage1.glb, then markers.json)
 - Markers only: npm run markers (re-extract markers.json from every stage .glb)
 - Jump in: http://localhost:5173/PocV2/?stage=1&stop=4&seed=42&debug=1
@@ -25,6 +26,7 @@ Design: docs/design.md. Build spec: docs/spec.md.
 - Level layout lives in the stage .glb (named empties: Path_, Look_, Spawn_, Cover_). Never edit
   *.markers.json by hand; it is generated, and validate fails when it is stale.
 - Relative imports use explicit .ts extensions, so tools/ can run with plain `node` and reuse src/sim.
+- Saves go through src/save/saveStore.ts only; treat stored and imported data as untrusted.
 - Do not add dependencies without asking. Do not add or download assets; use primitives and ask.
 - After any view or UI change, run the browser test and look at the screenshots before saying it is done.
 - Stay inside the size budgets. If a change breaks one, say so instead of raising the budget.

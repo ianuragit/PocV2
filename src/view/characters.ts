@@ -8,7 +8,7 @@ import {
   type Material,
 } from 'three';
 import type { Tuning } from '../sim/index.ts';
-import { CIVILIAN_OUTLINE, OUTFITS, type Outfit } from './style.ts';
+import { BRICK, CIVILIAN_OUTLINE, CRATE_COLORS, CRATE_WOOD, OUTFITS, type Outfit } from './style.ts';
 
 /**
  * Blocky, flat-shaded characters built from boxes, sized to the simulation's hit zones
@@ -25,7 +25,16 @@ export interface Character {
   materials: Material[];
 }
 
-export function buildCharacter(type: string, civilian: boolean, body: Tuning['body']): Character {
+export interface CharacterOptions {
+  civilian?: boolean;
+  /** Holds a riot shield across the body (blocks body shots from the front). */
+  shield?: boolean;
+  /** Holds a brick in the throwing hand instead of a gun. */
+  thrower?: boolean;
+}
+
+export function buildCharacter(type: string, opts: CharacterOptions, body: Tuning['body']): Character {
+  const civilian = opts.civilian ?? false;
   const outfit: Outfit = OUTFITS[type] ?? OUTFITS.grunt!;
   const materials: Material[] = [];
   const mat = (color: number) => {
@@ -99,10 +108,27 @@ export function buildCharacter(type: string, civilian: boolean, body: Tuning['bo
   const gunArm = limb(shoulderR, handR, jacket, skin);
   torso.add(gunArm);
   let gun: Mesh | null = null;
-  if (!civilian) {
+  if (opts.thrower) {
+    gun = box(0.22, 0.12, 0.12, mat(BRICK));
+    gun.position.set(-hr, hu + 0.1, hf);
+    torso.add(gun);
+  } else if (!civilian) {
     gun = box(0.07, 0.12, 0.26, mat(0x1a1a1a));
     gun.position.set(-hr, hu + 0.05, hf + 0.08);
     torso.add(gun);
+  }
+  if (opts.shield) {
+    // A riot shield across the front of the body, held in the off hand, with a viewing slot.
+    const board = box(0.62, 0.95, 0.05, mat(0x8fa3b8));
+    board.position.set(0.04, body.body_bottom + 0.62, 0.32);
+    const slot = box(0.4, 0.07, 0.06, mat(0x22324a));
+    slot.position.set(0.04, body.body_bottom + 0.98, 0.33);
+    torso.add(board, slot);
+  }
+  if (outfit.coat) {
+    const coat = box(0.5 * bulk, 0.55, 0.3 * bulk, mat(outfit.coat));
+    coat.position.y = hip - 0.2;
+    root.add(coat);
   }
 
   // Off arm: hanging, or raised for civilians (hands up reads as "don't shoot").
@@ -152,4 +178,44 @@ function limb(
   fist.position.z = len - 0.03;
   g.add(arm, fist);
   return g;
+}
+
+/** A wooden crate with a coloured band for the weapon inside; matches tuning.crate half extents. */
+export function buildCrate(
+  weapon: string,
+  half: [number, number, number],
+): { root: Group; materials: Material[] } {
+  const materials: Material[] = [];
+  const mat = (color: number) => {
+    const m = new MeshLambertMaterial({ color, flatShading: true, transparent: true });
+    materials.push(m);
+    return m;
+  };
+  const [hx, hy, hz] = half;
+  const root = new Group();
+  const wood = new Mesh(new BoxGeometry(hx * 2, hy * 2, hz * 2), mat(CRATE_WOOD.side));
+  wood.position.y = hy;
+  const band = new Mesh(
+    new BoxGeometry(hx * 2 + 0.02, hy * 0.5, hz * 2 + 0.02),
+    mat(CRATE_COLORS[weapon] ?? 0xffffff),
+  );
+  band.position.y = hy;
+  const edgeMat = mat(CRATE_WOOD.edge);
+  root.add(wood, band);
+  for (const sx of [-1, 1]) {
+    for (const sz of [-1, 1]) {
+      const post = new Mesh(new BoxGeometry(0.06, hy * 2 + 0.02, 0.06), edgeMat);
+      post.position.set(sx * (hx - 0.02), hy, sz * (hz - 0.02));
+      root.add(post);
+    }
+  }
+  return { root, materials };
+}
+
+/** A thrown brick. */
+export function buildProjectile(): { root: Group; materials: Material[] } {
+  const m = new MeshLambertMaterial({ color: BRICK, flatShading: true, transparent: true });
+  const root = new Group();
+  root.add(new Mesh(new BoxGeometry(0.3, 0.16, 0.16), m));
+  return { root, materials: [m] };
 }

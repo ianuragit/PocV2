@@ -10,6 +10,8 @@ export default defineConfig({
     ...devices['Desktop Chrome'],
     viewport: { width: 1280, height: 720 },
     launchOptions: {
+      // Local runs can point at a preinstalled Chromium when its version differs from @playwright/test's.
+      ...(process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {}),
       // Runners have no GPU; allow software WebGL so the canvas renders.
       args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader', '--ignore-gpu-blocklist'],
     },

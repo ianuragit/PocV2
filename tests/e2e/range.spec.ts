@@ -68,7 +68,10 @@ test.describe('firing range (M2 acceptance)', () => {
     expect(await g.rings()).toEqual([]);
     await expect(page.locator('#hud')).toBeHidden();
     await snap(page, 'results');
+    // A score of 0 makes no table: straight back to the title, then a fresh game.
     await page.locator('#screen').click();
+    await expect(page.locator('#screen')).toContainText('CLICK TO START');
+    await page.getByText('CLICK TO START').click();
     await expect(page.locator('#screen')).toBeHidden();
     expect((await g.state()).lives).toBe(5);
     expect(errors).toEqual([]);

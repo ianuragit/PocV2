@@ -6,7 +6,7 @@ test('boots to the title, starts on click, and clears stop 1 of stage 1', async 
   const g = await openGame(page, 'stage=1&seed=42&test=1');
   await expect(page.locator('#version')).toContainText('build ');
 
-  await page.locator('#screen').click();
+  await page.getByText('CLICK TO START').click();
   await expect(page.locator('#screen')).toBeHidden();
   await expect(page.locator('#hud')).toBeVisible();
 
@@ -15,7 +15,7 @@ test('boots to the title, starts on click, and clears stop 1 of stage 1', async 
     const state = await g.state();
     if (state.stop > 0) break;
     const target = state.actors.find(
-      (a) => !a.civilian && ['entering', 'waiting', 'aiming'].includes(a.phase),
+      (a) => a.role === 'enemy' && ['entering', 'waiting', 'aiming'].includes(a.phase),
     );
     if (target && state.weapon.cooldown === 0) {
       if (state.weapon.ammo === 0) await page.keyboard.press('r');

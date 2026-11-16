@@ -11,6 +11,9 @@ describe('idle bot on stage 1', () => {
     expect(game.state.phase).toBe('gameOver');
     expect(game.state.lives).toBe(0);
     expect(hits).toHaveLength(5);
+    // The continue offer comes first; the idle bot lets its 10 s countdown run out.
+    expect(events.find((e) => e.event.type === 'ContinueOffered')?.frame).toBe(IDLE_GAME_OVER_FRAME);
+    expect(game.state.continuesUsed).toBe(0);
     expect(game.state.stop).toBe(0);
     expect(game.state.frame).toBe(IDLE_GAME_OVER_FRAME);
     // Once over, the game ignores further steps instead of hanging or advancing.

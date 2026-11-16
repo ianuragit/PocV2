@@ -292,9 +292,12 @@ body {
 
 .screen .controls {
   font-size: 2.2cqh;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.02em;
-  color: var(--muted);
+  color: #d5dbe3;
+  text-shadow:
+    0.25cqh 0.25cqh 0 var(--ink),
+    0 0 0.8cqh var(--ink);
 }
 
 .blink {
@@ -316,4 +319,194 @@ body {
     monospace;
   color: var(--muted);
   pointer-events: none;
+}
+
+/* ---------- M4: weapons, menus, continue, results ---------- */
+
+.hud-weapon {
+  position: absolute;
+  right: 2.5cqh;
+  bottom: 10.5cqh;
+  font-size: 3cqh;
+  color: var(--cool);
+  letter-spacing: 0.08em;
+}
+
+.round.shotgun {
+  background: linear-gradient(90deg, #ff8a8a 0 35%, #d8323c 35% 75%, #8f1d24 75%);
+}
+
+.round.machine_pistol {
+  background: linear-gradient(90deg, #9cc4ff 0 35%, #2f6fd6 35% 75%, #1c4690 75%);
+}
+
+.round.magnum {
+  background: linear-gradient(90deg, #fff1a8 0 35%, #f2c230 35% 75%, #b8891a 75%);
+  height: 6cqh;
+}
+
+.ammo-count {
+  align-self: center;
+  margin-left: 0.6cqh;
+  font-size: 4.4cqh;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+#flash.reduced.hit {
+  animation: flash-reduced 0.25s linear;
+}
+
+@keyframes flash-reduced {
+  from {
+    background: var(--danger);
+    opacity: 0.18;
+  }
+  to {
+    background: var(--danger);
+    opacity: 0;
+  }
+}
+
+.screen .menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.4cqh;
+}
+
+.btn {
+  font-family: var(--arcade);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 2.6cqh;
+  letter-spacing: 0.06em;
+  color: var(--fg);
+  background: rgba(11, 13, 18, 0.7);
+  border: 0.35cqh solid var(--fg);
+  padding: 0.9cqh 2.2cqh;
+  cursor: pointer;
+  transform: skewX(-8deg);
+}
+
+.btn:hover,
+.btn:focus-visible {
+  color: var(--ink);
+  background: var(--accent);
+  border-color: var(--accent);
+  outline: none;
+}
+
+.btn.on {
+  color: var(--ink);
+  background: var(--cool);
+  border-color: var(--cool);
+}
+
+.btn.primary {
+  font-size: 3.2cqh;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.screen .small {
+  font-size: 2.4cqh;
+  font-weight: 800;
+  color: #d5dbe3;
+  text-shadow:
+    0.25cqh 0.25cqh 0 var(--ink),
+    0 0 0.8cqh var(--ink);
+}
+
+.countdown {
+  font-family: var(--arcade);
+  font-weight: 900;
+  font-size: 18cqh;
+  line-height: 1;
+  color: var(--danger);
+  -webkit-text-stroke: 0.8cqh var(--ink);
+  paint-order: stroke fill;
+}
+
+.rank {
+  font-family: var(--arcade);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 16cqh;
+  line-height: 1;
+  -webkit-text-stroke: 0.8cqh var(--ink);
+  paint-order: stroke fill;
+  filter: drop-shadow(0.6cqh 0.6cqh 0 var(--ink));
+}
+
+.rank-S {
+  color: var(--accent);
+}
+.rank-A {
+  color: var(--danger);
+}
+.rank-B {
+  color: var(--cool);
+}
+.rank-C {
+  color: var(--muted);
+}
+
+.initials {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2cqh;
+  font-size: 2.6cqh;
+  font-weight: 800;
+}
+
+.initials input {
+  width: 5.2em;
+  font-family: var(--arcade);
+  font-size: 6cqh;
+  font-weight: 900;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  padding-left: 0.3em;
+  color: var(--accent);
+  background: rgba(11, 13, 18, 0.8);
+  border: 0.4cqh solid var(--accent);
+  outline: none;
+}
+
+.table {
+  border-collapse: collapse;
+  font-family: var(--arcade);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 2.8cqh;
+  font-variant-numeric: tabular-nums;
+}
+
+.table td {
+  padding: 0.3cqh 2cqh;
+  text-align: right;
+}
+
+.table tr.me td {
+  color: var(--accent);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 2cqh;
+  font-weight: 800;
+  font-size: 2.6cqh;
+}
+
+.option > span {
+  width: 14em;
+  text-align: right;
+  color: var(--fg);
+  text-shadow:
+    0.25cqh 0.25cqh 0 var(--ink),
+    0 0 0.8cqh var(--ink);
 }

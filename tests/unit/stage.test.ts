@@ -71,6 +71,55 @@ describe('validateStage', () => {
     ]);
   });
 
+  it('checks crates: a weapon from tuning and a Crate_ marker', () => {
+    const m = {
+      ...markers,
+      Crate_A: {
+        position: [0, 0, 5] as [number, number, number],
+        rotation: [0, 0, 0] as [number, number, number],
+      },
+    };
+    const withSpawn = (extra: Record<string, unknown>) => {
+      const st = stage1() as StageDef;
+      st.scenes[0]!.stops[0]!.waves[0]!.spawns.push({
+        type: 'crate',
+        marker: 'Crate_A',
+        entry: 'appear',
+        delay: 0,
+        ...extra,
+      } as never);
+      return validateStage(st, m, t).join('\n');
+    };
+    expect(withSpawn({ weapon: 'shotgun' })).toBe('');
+    expect(withSpawn({ weapon: 'laser' })).toMatch(/crates need a weapon/);
+    expect(withSpawn({ weapon: 'shotgun', marker: 'Spawn_Doorway' })).toMatch(/must start with Crate_/);
+    expect(errorsFor((st) => (firstSpawn(st).weapon = 'shotgun')).join()).toMatch(/only crates hold weapons/);
+  });
+
+  it('checks the boss: one phase marker per phase, starting at its marker', () => {
+    const withBoss = (phase_markers: unknown, marker = 'Spawn_DepotCentre') => {
+      const st = stage1() as StageDef;
+      st.scenes[0]!.stops[0]!.waves[0]!.spawns.push({
+        type: 'boss',
+        marker,
+        entry: 'appear',
+        delay: 0,
+        phase_markers,
+      } as never);
+      return validateStage(st, markers, t).join('\n');
+    };
+    const three = ['Spawn_DepotCentre', 'Spawn_DepotLeft', 'Spawn_DepotBack'];
+    expect(withBoss(three)).toBe('');
+    expect(withBoss(three.slice(0, 2))).toMatch(/needs 3 phase markers/);
+    expect(withBoss(three, 'Spawn_DepotLeft')).toMatch(/must be the same as marker/);
+    expect(withBoss(['Spawn_DepotCentre', 'Spawn_Nope', 'Spawn_DepotBack'])).toMatch(
+      /"Spawn_Nope" does not exist/,
+    );
+    expect(errorsFor((st) => (firstSpawn(st).phase_markers = three)).join()).toMatch(
+      /only the boss has phase markers/,
+    );
+  });
+
   it('reports structural problems', () => {
     expect(validateStage(null, markers, t)).toEqual(['stage: must be an object']);
     expect(validateStage({}, {}, t)).toEqual(
@@ -97,7 +146,7 @@ describe('validateStage', () => {
 describe('resolveStage', () => {
   it('converts seconds to frames and marker names to positions', () => {
     const r = resolveStage(stage1(), markers, t);
-    expect(r.stops).toHaveLength(9);
+    expect(r.stops).toHaveLength(10);
     const second = r.stops[0]!.waves[0]![1]!;
     expect(second).toMatchObject({
       type: 'runner',

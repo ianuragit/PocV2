@@ -16,6 +16,8 @@ export interface InputHandlers {
  */
 export class InputCapture {
   pointer: ScreenPoint | null = null;
+  /** True while the primary button is down on the playfield (for automatic weapons). */
+  held = false;
   private queue: Input[] = [];
   private readonly raycaster = new Raycaster();
 
@@ -26,6 +28,12 @@ export class InputCapture {
   ) {
     surface.addEventListener('pointermove', (e) => (this.pointer = this.local(e)));
     surface.addEventListener('pointerdown', (e) => this.onPointerDown(e));
+    const release = (e: PointerEvent) => {
+      if (e.button === 0 || e.type !== 'pointerup') this.held = false;
+    };
+    window.addEventListener('pointerup', release);
+    window.addEventListener('pointercancel', release);
+    window.addEventListener('blur', () => (this.held = false));
     surface.addEventListener('contextmenu', (e) => e.preventDefault());
     window.addEventListener('keydown', (e) => this.onKey(e));
   }
@@ -68,6 +76,10 @@ export class InputCapture {
     });
   }
 
+  push(input: Input): void {
+    this.queue.push(input);
+  }
+
   queueReload(): void {
     this.queue.push({ type: 'reload' });
   }
@@ -86,11 +98,15 @@ export class InputCapture {
     this.pointer = p;
     if (this.handlers.onAction('click')) return;
     if (e.button === 2) this.queueReload();
-    else if (e.button === 0) this.fireAt(p);
+    else if (e.button === 0) {
+      this.held = true;
+      this.fireAt(p);
+    }
   }
 
   private onKey(e: KeyboardEvent): void {
-    if (e.repeat) return;
+    // Typing initials or using a form control is not gameplay.
+    if (e.repeat || e.target instanceof HTMLInputElement || e.target instanceof HTMLButtonElement) return;
     const key = e.key.toLowerCase();
     if (key === 'f') {
       this.handlers.onAction('fullscreen');

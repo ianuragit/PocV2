@@ -8,6 +8,7 @@ import { tuning } from '../helpers.ts';
 const waiting = (id: number, queuedAt = 0, shots = 0): Actor => ({
   id,
   type: 'grunt',
+  role: 'enemy',
   civilian: false,
   position: vec(0, 0, 0),
   yaw: 0,
