@@ -11,7 +11,7 @@ Design: docs/design.md. Build spec: docs/spec.md.
 - Browser test: npm run test:e2e (screenshots land in test-results/)
 - Jump in: http://localhost:5173/PocV2/?stage=1&stop=4&seed=42&debug=1
   - `stage` = `1` or `range`; `stop` is 1-based; `difficulty` = easy|normal|hard; `god=1` never loses a life
-  - `debug=1` draws hit zones and ring timers and exposes `window.__game` (see src/debug/hooks.ts)
+  - `debug=1` draws hit zones and ring timers and exposes `window.__game` (see src/debug/hooks.ts); `test=1` exposes it without drawing
   - Browser tests hold the frame loop (`__game.hold(true)`) and drive steps with `__game.stepFrames(n)`
 
 ## Rules

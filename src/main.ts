@@ -25,7 +25,8 @@ async function boot(): Promise<void> {
       god: params.get('god') === '1',
       debug,
     });
-    if (import.meta.env.DEV || debug) installDebugHooks(app);
+    // Test hooks: always in dev; in a built site only with debug=1 (draws hit zones) or test=1 (does not).
+    if (import.meta.env.DEV || debug || params.get('test') === '1') installDebugHooks(app);
   } catch (err) {
     console.error(err);
     new Screens().show('error', { message: err instanceof Error ? err.message : String(err) });

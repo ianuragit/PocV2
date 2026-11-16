@@ -77,7 +77,8 @@ export class App {
       god: this.opts.god,
     });
     if (!this.stageBuilt) {
-      this.renderer.scene.add(buildStageView(this.game.stage));
+      const spawns = this.game.stage.stops.flatMap((stop) => stop.waves.flat().map((sp) => sp.position));
+      this.renderer.scene.add(buildStageView(this.game.stage, spawns));
       this.stageBuilt = true;
     }
     this.prevCamera = this.game.state.camera.position;
@@ -86,6 +87,7 @@ export class App {
     this.accumulator = 0;
     this.endTimer = -1;
     this.hud.reset();
+    this.overlay.clearEffects();
   }
 
   start(): void {
@@ -116,7 +118,11 @@ export class App {
   }
 
   private onEvents(events: readonly GameEvent[]): void {
+    const at = this.input.pointer;
     for (const e of events) {
+      if (e.type === 'EnemyHit') this.overlay.burst(at, 'hit');
+      else if (e.type === 'CivilianHit') this.overlay.burst(at, 'civilian');
+      else if (e.type === 'Miss' || e.type === 'CoverHit') this.overlay.burst(at, 'miss');
       if (e.type === 'Paused' && this.screens.current === 'playing') this.screens.show('paused');
       else if (e.type === 'Resumed' && this.screens.current === 'paused') this.screens.show('playing');
       else if (e.type === 'GameOver' || e.type === 'StageCleared') this.endTimer = RESULTS_DELAY;
@@ -205,6 +211,7 @@ export class App {
     const playing = this.screens.current === 'playing';
     const pointer = this.input.pointer;
     this.overlay.draw({
+      dt,
       camera: this.renderer.camera,
       rings: playing || this.screens.current === 'paused' ? s.rings : [],
       actors: s.actors,

@@ -3,7 +3,7 @@ import { openGame, watchErrors } from './game';
 
 test('boots to the title, starts on click, and clears stop 1 of stage 1', async ({ page }) => {
   const errors = watchErrors(page);
-  const g = await openGame(page, 'stage=1&seed=42&debug=1');
+  const g = await openGame(page, 'stage=1&seed=42&test=1');
   await expect(page.locator('#version')).toContainText('build ');
 
   await page.locator('#screen').click();

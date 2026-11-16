@@ -17,18 +17,18 @@ export class Screens {
     this.root.classList.toggle('hidden', name === 'playing');
     switch (name) {
       case 'loading':
-        this.root.innerHTML = `<h1>REAL COP 2</h1><p class="blink">Loading…</p>`;
+        this.root.innerHTML = `<h1 class="logo">REAL COP 2</h1><p class="blink">Loading…</p>`;
         break;
       case 'title':
-        this.root.innerHTML = `<h1>REAL COP 2</h1><p class="blink">Click to start</p><p class="controls">${CONTROLS}</p>`;
+        this.root.innerHTML = `<h1 class="logo">REAL COP 2</h1><p class="blink">CLICK TO START</p><p class="controls">${CONTROLS}</p>`;
         break;
       case 'paused':
-        this.root.innerHTML = `<h2>PAUSED</h2><p class="blink">Click to resume</p><p class="controls">${CONTROLS}</p>`;
+        this.root.innerHTML = `<h2>PAUSED</h2><p class="blink">CLICK TO RESUME</p><p class="controls">${CONTROLS}</p>`;
         break;
       case 'results':
         this.root.innerHTML = `<h2>${data.cleared ? 'STAGE CLEAR' : 'GAME OVER'}</h2>
-          <div class="stats">Score ${(data.score ?? 0).toLocaleString('en-US')}<br>Accuracy ${data.accuracy ?? 0}%</div>
-          <p class="blink">Click to play again</p>`;
+          <div class="stats">SCORE ${String(data.score ?? 0).padStart(7, '0')}<br>HIT RATE ${data.accuracy ?? 0}%</div>
+          <p class="blink">CLICK TO PLAY AGAIN</p>`;
         break;
       case 'error':
         this.root.innerHTML = `<h2>Something went wrong</h2><p>${escapeHtml(data.message ?? '')}</p>`;
