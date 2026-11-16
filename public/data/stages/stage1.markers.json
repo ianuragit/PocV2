@@ -101,6 +101,54 @@
       1
     ]
   },
+  "Crate_Hall": {
+    "position": [
+      -2.09,
+      0,
+      19
+    ],
+    "rotation": [
+      0,
+      2.7611,
+      0
+    ]
+  },
+  "Crate_Platform": {
+    "position": [
+      3.51,
+      0,
+      57.05
+    ],
+    "rotation": [
+      0,
+      2.8113,
+      0
+    ]
+  },
+  "Crate_Tunnel": {
+    "position": [
+      -3.21,
+      0,
+      146.96
+    ],
+    "rotation": [
+      0,
+      2.9718,
+      0
+    ]
+  },
+  "Look_Boss": {
+    "position": [
+      -2,
+      1.2,
+      184.9613
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
   "Look_Depot": {
     "position": [
       -2,
@@ -386,6 +434,66 @@
     "rotation": [
       0,
       -3.0137,
+      0
+    ]
+  },
+  "Spawn_BossA": {
+    "position": [
+      -2,
+      0,
+      184.96
+    ],
+    "rotation": [
+      0,
+      3.1416,
+      0
+    ]
+  },
+  "Spawn_BossB": {
+    "position": [
+      2,
+      0,
+      184.96
+    ],
+    "rotation": [
+      0,
+      -2.8198,
+      0
+    ]
+  },
+  "Spawn_BossC": {
+    "position": [
+      -7,
+      0,
+      183.96
+    ],
+    "rotation": [
+      0,
+      2.715,
+      0
+    ]
+  },
+  "Spawn_BossGuardL": {
+    "position": [
+      -6,
+      0,
+      179.96
+    ],
+    "rotation": [
+      0,
+      2.6224,
+      0
+    ]
+  },
+  "Spawn_BossGuardM": {
+    "position": [
+      -4,
+      0,
+      181.96
+    ],
+    "rotation": [
+      0,
+      2.9229,
       0
     ]
   },

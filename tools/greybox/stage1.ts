@@ -118,6 +118,7 @@ export const STOPS = {
   tunnelA: offsetAtZ(122),
   tunnelB: offsetAtZ(140),
   depot: offsetAtZ(166),
+  boss: offsetAtZ(173),
 };
 
 const markers: NodeData[] = PATH.map((p, i) => ({
@@ -141,6 +142,18 @@ function spawn(name: string, offset: number, ahead: number, side: number, y = 0)
   const yaw = Math.atan2(cam.x - x, cam.z - z);
   markers.push({ name: `Spawn_${name}`, translation: [round(x), y, round(z)], rotation: yawQuat(yaw) });
   return vec(x, y, z);
+}
+
+/** A weapon crate marker: the crate itself is drawn by the game, so it can be shot open. */
+function crate(name: string, offset: number, ahead: number, side: number): void {
+  const { cam, forward, right } = stopPose(offset);
+  const x = cam.x + forward.x * ahead + right.x * side;
+  const z = cam.z + forward.z * ahead + right.z * side;
+  markers.push({
+    name: `Crate_${name}`,
+    translation: [round(x), 0, round(z)],
+    rotation: yawQuat(Math.atan2(cam.x - x, cam.z - z)),
+  });
 }
 
 /** A shot-blocking box; also drawn, so what blocks shots is what you see. */
@@ -410,6 +423,19 @@ spawn('DepotRight', STOPS.depot, 12, -1.2);
 spawn('DepotBack', STOPS.depot, 20, 3);
 spawn('DepotCratesRight', STOPS.depot, 11.8, -5.8);
 spawn('DepotFarRight', STOPS.depot, 17, -8.5);
+
+// Boss: the camera rolls into the depot doorway; the boss moves between three marks.
+look('Boss', STOPS.boss, 12);
+spawn('BossA', STOPS.boss, 12, 0);
+spawn('BossB', STOPS.boss, 12, -4);
+spawn('BossC', STOPS.boss, 11, 5);
+spawn('BossGuardL', STOPS.boss, 7, 4);
+spawn('BossGuardM', STOPS.boss, 9, 2);
+
+// Weapon crates: low boxes off the firing lines (shots at body height pass over them).
+crate('Hall', STOPS.hall, 5, 2);
+crate('Platform', STOPS.platformA, 7, 2.4);
+crate('Tunnel', STOPS.tunnelB, 7, 1.2);
 
 // ---------- Write ----------
 

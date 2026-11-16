@@ -1,14 +1,40 @@
 import { describe, expect, it } from 'vitest';
 import {
+  accuracy,
   bonusLivesCrossed,
   breakCombo,
   createScore,
   multiplierFor,
+  rankFor,
   registerHit,
 } from '../../src/sim/score.ts';
 import { tuning } from '../helpers.ts';
 
 const scoring = tuning().scoring;
+
+describe('rank and accuracy', () => {
+  it('ranks against the stage thresholds', () => {
+    const th = { S: 300, A: 200, B: 100 };
+    expect([0, 99, 100, 199, 200, 299, 300, 1e6].map((x) => rankFor(x, th))).toEqual([
+      'C',
+      'C',
+      'B',
+      'B',
+      'A',
+      'A',
+      'S',
+      'S',
+    ]);
+  });
+
+  it('counts shots that hit something', () => {
+    const s = createScore();
+    expect(accuracy(s)).toBe(0);
+    s.shots = 3;
+    s.shotsOnTarget = 2;
+    expect(accuracy(s)).toBe(67);
+  });
+});
 
 describe('score', () => {
   it('pays each zone its base points at x1', () => {

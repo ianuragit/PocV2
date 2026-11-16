@@ -3,12 +3,47 @@ import type { Vec3 } from './vec.ts';
 // ---------- Data files ----------
 
 export type Difficulty = 'easy' | 'normal' | 'hard';
-export type HitZone = 'gun_hand' | 'head' | 'body';
+export type HitZone = 'gun_hand' | 'head' | 'body' | 'thrown';
+export type WeaponKind = 'revolver' | 'shotgun' | 'machine_pistol' | 'magnum';
+export type SpecialWeapon = Exclude<WeaponKind, 'revolver'>;
+export type Rank = 'S' | 'A' | 'B' | 'C';
+
+export interface WeaponDef {
+  capacity: number;
+  max_shots_per_second: number;
+  /** Revolver only: specials are dropped when empty, never reloaded. */
+  reload_time?: number;
+  /** Shotgun: pellets per shot, in a fixed pattern (centre plus a ring) of this half-angle. */
+  pellets?: number;
+  spread_deg?: number;
+  /** Fires repeatedly while the trigger is held (the view sends Fire every step). */
+  auto?: boolean;
+  /** Passes through cover, shields and enemies, hitting everything on the line. */
+  pierce?: boolean;
+}
+
+export interface EnemyDef {
+  aim_time: number;
+  hits: number;
+  /** 'throw' launches a shootable projectile instead of an instant shot. */
+  attack?: 'shoot' | 'throw';
+  /** Throwers: seconds the projectile takes to reach the player. */
+  flight_time?: number;
+  /** Carries a shield that blocks body shots from the front (the magnum pierces it). */
+  shield?: boolean;
+}
 
 export interface Tuning {
   version: number;
   step_hz: number;
-  player: { invulnerable_time: number; ring_pause_on_hit: number; bonus_lives_at: number[] };
+  player: {
+    invulnerable_time: number;
+    ring_pause_on_hit: number;
+    bonus_lives_at: number[];
+    continues: number;
+    /** Seconds the continue offer waits before the game ends. */
+    continue_time: number;
+  };
   difficulty: Record<Difficulty, { lives: number; max_rings: number; aim_time_scale: number }>;
   rings: {
     start_scale: number;
@@ -19,6 +54,16 @@ export interface Tuning {
     red_at: number;
   };
   revolver: { capacity: number; max_shots_per_second: number; reload_time: number };
+  specials: Record<SpecialWeapon, WeaponDef>;
+  /** Shootable weapon crates: half extents of the box, centred above the marker. */
+  crate: { half_extents: [number, number, number] };
+  projectile: { radius: number };
+  boss: {
+    phases: { hits: number; aim_time: number }[];
+    /** Seconds the boss is out of reach while it moves to the next phase marker. */
+    move_time: number;
+    bonus: number;
+  };
   scoring: {
     gun_hand: number;
     head: number;
@@ -41,7 +86,7 @@ export interface Tuning {
     hand_offset: [number, number, number];
     hand_radius: number;
   };
-  enemies: Record<string, { aim_time: number; hits: number }>;
+  enemies: Record<string, EnemyDef>;
 }
 
 export interface SpawnDef {
@@ -50,6 +95,10 @@ export interface SpawnDef {
   entry: string;
   delay: number;
   aim_time?: number;
+  /** Crates: the weapon inside. */
+  weapon?: SpecialWeapon;
+  /** Boss: one Spawn_ marker per phase; the boss moves between them. */
+  phase_markers?: string[];
 }
 export interface WaveDef {
   spawns: SpawnDef[];
@@ -83,7 +132,14 @@ export type Markers = Record<string, MarkerDef>;
 
 // ---------- Inputs and events ----------
 
-export type Input = { type: 'fire'; origin: Vec3; direction: Vec3 } | { type: 'reload' } | { type: 'pause' };
+export type Input =
+  | { type: 'fire'; origin: Vec3; direction: Vec3 }
+  | { type: 'reload' }
+  | { type: 'pause' }
+  /** Accept the continue offer: lives refill, score resets. */
+  | { type: 'continue' }
+  /** Decline the continue offer. */
+  | { type: 'giveUp' };
 
 export type GameEvent =
   | { type: 'Paused' }
@@ -101,21 +157,48 @@ export type GameEvent =
   | { type: 'EnemyHit'; id: number; zone: HitZone; points: number; killed: boolean; disarmed: boolean }
   | { type: 'CivilianHit'; id: number }
   | { type: 'CoverHit'; name: string }
+  | { type: 'ShieldBlock'; id: number }
+  | { type: 'CrateOpened'; id: number; weapon: SpecialWeapon }
+  | { type: 'WeaponPickedUp'; weapon: SpecialWeapon }
+  | { type: 'WeaponLost'; weapon: SpecialWeapon; reason: 'empty' | 'hit' }
+  | { type: 'ProjectileThrown'; id: number; from: number }
+  | { type: 'ProjectileLanded'; id: number; hit: boolean }
+  | { type: 'BossPhase'; id: number; phase: number }
+  | { type: 'BossDefeated'; id: number; bonus: number }
+  | { type: 'ContinueOffered'; continuesLeft: number; seconds: number }
+  | { type: 'Continued'; continuesLeft: number }
   | { type: 'Miss' }
   | { type: 'CivilianLeft'; id: number }
   | { type: 'PlayerHit'; lives: number; cause: 'shot' | 'civilian' }
   | { type: 'BonusLife'; lives: number }
-  | { type: 'StageCleared'; score: number }
+  | { type: 'StageCleared'; score: number; rank: Rank }
   | { type: 'GameOver'; score: number };
 
 // ---------- State ----------
 
-export type ActorPhase = 'entering' | 'waiting' | 'aiming' | 'standing' | 'dead' | 'disarmed' | 'fled';
+export type ActorPhase =
+  | 'entering'
+  | 'waiting'
+  | 'aiming'
+  /** Civilians and crates: present, not attacking. */
+  | 'standing'
+  /** Projectiles: in the air. */
+  | 'flying'
+  /** Boss: out of reach between phases. */
+  | 'moving'
+  | 'dead'
+  | 'disarmed'
+  | 'opened'
+  | 'fled';
+
+export type ActorRole = 'enemy' | 'civilian' | 'crate' | 'projectile' | 'boss';
 
 export interface Actor {
   id: number;
-  /** Enemy type name from tuning.enemies, or 'civilian'. */
+  /** Enemy type name from tuning.enemies, or 'civilian', 'crate', 'projectile', 'boss'. */
   type: string;
+  role: ActorRole;
+  /** Same as role === 'civilian'; kept because most code only asks this. */
   civilian: boolean;
   position: Vec3;
   yaw: number;
@@ -132,6 +215,12 @@ export interface Actor {
   queuedAt: number;
   /** Rings this actor has closed so far. */
   shots: number;
+  /** Crates: the weapon inside. */
+  weapon?: SpecialWeapon;
+  /** Projectiles: where they fly from and to, and the total flight in frames. */
+  flight?: { from: Vec3; to: Vec3; frames: number };
+  /** Boss: current phase (0-based) and the marker positions per phase. */
+  boss?: { phase: number; positions: Vec3[]; yaws: number[] };
 }
 
 export interface Ring {
@@ -143,6 +232,7 @@ export interface Ring {
 }
 
 export interface WeaponState {
+  kind: WeaponKind;
   ammo: number;
   capacity: number;
   cooldown: number;
@@ -154,10 +244,21 @@ export interface ScoreState {
   streak: number;
   multiplier: number;
   shots: number;
+  /** Targets hit (a shotgun or magnum shot can hit several). */
   hits: number;
+  /** Shots that hit at least one target, for accuracy. */
+  shotsOnTarget: number;
 }
 
-export type GamePhase = 'travel' | 'combat' | 'stageClear' | 'gameOver';
+export type GamePhase = 'travel' | 'combat' | 'continue' | 'stageClear' | 'gameOver';
+
+export interface StageResult {
+  score: number;
+  rank: Rank;
+  /** Percent of shots that hit, 0..100. */
+  accuracy: number;
+  continuesUsed: number;
+}
 
 export interface GameState {
   frame: number;
@@ -174,4 +275,10 @@ export interface GameState {
   lives: number;
   invulnerable: number;
   ringPause: number;
+  continuesLeft: number;
+  continuesUsed: number;
+  /** Frames left on the continue offer, while phase is 'continue'. */
+  continueTimer: number;
+  /** Set when the stage is cleared. */
+  result: StageResult | null;
 }

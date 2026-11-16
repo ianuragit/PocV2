@@ -42,15 +42,19 @@ export function advanceRings(actors: readonly Actor[]): Actor[] {
   return closed;
 }
 
+/** Rings to draw: every aiming enemy, and every thrown object in flight (closing as it lands). */
 export function ringsOf(actors: readonly Actor[], rings: Tuning['rings']): Ring[] {
-  return actors
-    .filter((a) => a.phase === 'aiming')
-    .map((a) => {
-      const progress = Math.min(1, a.ringElapsed / a.ringFrames);
-      return {
-        id: a.id,
-        progress,
-        scale: rings.start_scale + (rings.end_scale - rings.start_scale) * progress,
-      };
+  const out: Ring[] = [];
+  for (const a of actors) {
+    let progress: number;
+    if (a.phase === 'aiming') progress = Math.min(1, a.ringElapsed / a.ringFrames);
+    else if (a.phase === 'flying' && a.flight) progress = Math.min(1, 1 - a.timer / a.flight.frames);
+    else continue;
+    out.push({
+      id: a.id,
+      progress,
+      scale: rings.start_scale + (rings.end_scale - rings.start_scale) * progress,
     });
+  }
+  return out;
 }

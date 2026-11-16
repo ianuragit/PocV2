@@ -22,6 +22,7 @@ export function hooks(page: Page) {
     zoneScreen: (id: number, zone: HitZone) => call<{ x: number; y: number } | null>('zoneScreen', id, zone),
     rings: () => call<ReturnType<DebugHooks['rings']>>('rings'),
     skipToStop: (n: number) => call<void>('skipToStop', n),
+    menu: (action: string) => call<void>('menu', action),
   };
 }
 

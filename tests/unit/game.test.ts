@@ -128,7 +128,7 @@ describe('game flow', () => {
     });
     expect(events.slice(-2)).toEqual([
       { type: 'WaveCleared', stop: 0, wave: 0 },
-      { type: 'StageCleared', score: 200 },
+      { type: 'StageCleared', score: 200, rank: 'S' },
     ]);
     expect(g.game.state.phase).toBe('stageClear');
     expect(g.step()).toEqual([]);
@@ -245,6 +245,7 @@ describe('game flow', () => {
   it('ends the game on the last life and then ignores input', () => {
     const t = tuning();
     t.difficulty.normal.lives = 1;
+    t.player.continues = 0;
     const g = setup([[spawn('grunt', 'Spawn_Left'), spawn('civilian', 'Spawn_Mid')]], { tuning: t });
     g.step();
     const civ = bodyCenter(g.actor(2), t);
@@ -273,7 +274,7 @@ describe('game flow', () => {
     expect(game.state.stop).toBe(3);
     expect(game.state.camera.pathOffset).toBe(36);
     expect(runUntil(game, (e) => e.type === 'StopReached')).toContainEqual({ type: 'StopReached', stop: 3 });
-    expect(() => newGame({ startStop: 9 })).toThrow(/startStop/);
+    expect(() => newGame({ startStop: 10 })).toThrow(/startStop/);
     expect(() => newGame({ startStop: 1.5 })).toThrow(/startStop/);
   });
 

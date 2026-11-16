@@ -4,9 +4,9 @@
   "environment": "stages/stage1.glb",
   "music": "audio/music/stage1.ogg",
   "rank_thresholds": {
-    "S": 40000,
-    "A": 30000,
-    "B": 18000
+    "S": 85000,
+    "A": 65000,
+    "B": 40000
   },
   "scenes": [
     {
@@ -81,6 +81,13 @@
                   "marker": "Spawn_MachinesRight",
                   "entry": "run_in",
                   "delay": 0.9
+                },
+                {
+                  "type": "crate",
+                  "marker": "Crate_Hall",
+                  "entry": "appear",
+                  "delay": 0,
+                  "weapon": "shotgun"
                 }
               ]
             },
@@ -122,7 +129,7 @@
                   "delay": 0.3
                 },
                 {
-                  "type": "grunt",
+                  "type": "shield",
                   "marker": "Spawn_GateC",
                   "entry": "stand_up",
                   "delay": 0.6
@@ -166,6 +173,13 @@
                   "marker": "Spawn_PlatACivilian",
                   "entry": "stand_up",
                   "delay": 0.1
+                },
+                {
+                  "type": "crate",
+                  "marker": "Crate_Platform",
+                  "entry": "appear",
+                  "delay": 0,
+                  "weapon": "machine_pistol"
                 }
               ]
             },
@@ -211,7 +225,7 @@
             {
               "spawns": [
                 {
-                  "type": "grunt",
+                  "type": "shield",
                   "marker": "Spawn_PlatB2",
                   "entry": "run_in",
                   "delay": 0
@@ -280,7 +294,7 @@
                   "delay": 0
                 },
                 {
-                  "type": "grunt",
+                  "type": "thrower",
                   "marker": "Spawn_TunA1",
                   "entry": "run_in",
                   "delay": 0.5
@@ -313,7 +327,7 @@
                   "delay": 0
                 },
                 {
-                  "type": "grunt",
+                  "type": "vehicle",
                   "marker": "Spawn_CartTop",
                   "entry": "stand_up",
                   "delay": 0.4
@@ -323,6 +337,13 @@
                   "marker": "Spawn_TunnelCivilian",
                   "entry": "run_in",
                   "delay": 0.2
+                },
+                {
+                  "type": "crate",
+                  "marker": "Crate_Tunnel",
+                  "entry": "appear",
+                  "delay": 0,
+                  "weapon": "magnum"
                 }
               ]
             },
@@ -380,7 +401,7 @@
                   "delay": 0
                 },
                 {
-                  "type": "grunt",
+                  "type": "thrower",
                   "marker": "Spawn_DepotBack",
                   "entry": "run_in",
                   "delay": 0.5
@@ -390,6 +411,41 @@
                   "marker": "Spawn_DepotFarRight",
                   "entry": "run_in",
                   "delay": 0.9
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "showdown",
+      "stops": [
+        {
+          "path_offset": 183.5,
+          "travel_speed": 3,
+          "look_at": "Look_Boss",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "boss",
+                  "marker": "Spawn_BossA",
+                  "entry": "stand_up",
+                  "delay": 0,
+                  "phase_markers": ["Spawn_BossA", "Spawn_BossB", "Spawn_BossC"]
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BossGuardL",
+                  "entry": "run_in",
+                  "delay": 1.5
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BossGuardM",
+                  "entry": "run_in",
+                  "delay": 2.5
                 }
               ]
             }

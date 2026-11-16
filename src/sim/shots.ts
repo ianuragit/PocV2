@@ -1,4 +1,4 @@
-import { add, basis, dot, scale, sub, vec, type Vec3 } from './vec.ts';
+import { add, basis, cross, dot, normalize, scale, sub, vec, type Vec3 } from './vec.ts';
 import type { Actor, HitZone, Tuning } from './types.ts';
 import type { Box } from './stage.ts';
 
@@ -97,7 +97,7 @@ export function hitZones(actor: Pick<Actor, 'position' | 'yaw'>, body: Tuning['b
   };
 }
 
-/** Nearest zone of one actor the ray hits. Gun hand is tested first, so it wins ties. */
+/** Nearest zone of a person (enemy, civilian, boss) the ray hits. Gun hand is tested first, so it wins ties. */
 export function rayActor(ray: Ray, actor: Actor, body: Tuning['body']): { t: number; zone: HitZone } | null {
   const z = hitZones(actor, body);
   const candidates: { t: number | null; zone: HitZone }[] = [
@@ -112,43 +112,89 @@ export function rayActor(ray: Ray, actor: Actor, body: Tuning['body']): { t: num
   return best;
 }
 
-export type ShotTarget =
-  | { kind: 'actor'; actor: Actor; zone: HitZone; t: number }
-  | { kind: 'cover'; name: string; t: number }
-  | { kind: 'none' };
+/** The box a crate occupies: centred above its marker. */
+export function crateBox(actor: Actor, tuning: Tuning): Box {
+  const [hx, hy, hz] = tuning.crate.half_extents;
+  const c = add(actor.position, vec(0, hy, 0));
+  return { name: `crate${actor.id}`, min: sub(c, vec(hx, hy, hz)), max: add(c, vec(hx, hy, hz)) };
+}
 
-/** Resolves one shot against every hittable actor and cover box: the nearest thing wins. */
-export function resolveShot(
-  ray: Ray,
-  actors: readonly Actor[],
-  covers: readonly Box[],
-  body: Tuning['body'],
-): ShotTarget {
-  let best: ShotTarget = { kind: 'none' };
-  let bestT = Infinity;
+export type ShotHit =
+  | { kind: 'actor'; actor: Actor; zone: HitZone; t: number }
+  | { kind: 'shield'; actor: Actor; t: number }
+  | { kind: 'cover'; name: string; t: number };
+
+/** Everything one ray touches, nearest first, before cover and shields are applied. */
+function candidates(ray: Ray, actors: readonly Actor[], covers: readonly Box[], tuning: Tuning): ShotHit[] {
+  const hits: ShotHit[] = [];
   for (const actor of actors) {
     if (!isHittable(actor)) continue;
-    const hit = rayActor(ray, actor, body);
-    if (hit && hit.t < bestT) {
-      bestT = hit.t;
-      best = { kind: 'actor', actor, zone: hit.zone, t: hit.t };
+    if (actor.role === 'crate') {
+      const t = rayBox(ray, crateBox(actor, tuning));
+      if (t !== null) hits.push({ kind: 'actor', actor, zone: 'body', t });
+    } else if (actor.role === 'projectile') {
+      const t = raySphere(ray, actor.position, tuning.projectile.radius);
+      if (t !== null) hits.push({ kind: 'actor', actor, zone: 'thrown', t });
+    } else {
+      const hit = rayActor(ray, actor, tuning.body);
+      if (!hit) continue;
+      const shielded = tuning.enemies[actor.type]?.shield === true;
+      const fromFront = dot(ray.direction, basis(actor.yaw).forward) < 0;
+      if (shielded && hit.zone === 'body' && fromFront) hits.push({ kind: 'shield', actor, t: hit.t });
+      else hits.push({ kind: 'actor', actor, zone: hit.zone, t: hit.t });
     }
   }
   for (const box of covers) {
     const t = rayBox(ray, box);
-    if (t !== null && t < bestT) {
-      bestT = t;
-      best = { kind: 'cover', name: box.name, t };
-    }
+    if (t !== null) hits.push({ kind: 'cover', name: box.name, t });
   }
-  return best;
+  return hits.sort((a, b) => a.t - b.t);
+}
+
+/**
+ * Resolves one ray. A normal shot stops at the first thing it meets: an actor, a shield or cover.
+ * A piercing shot ignores cover and shields and hits every actor on the line, once each.
+ */
+export function traceRay(
+  ray: Ray,
+  actors: readonly Actor[],
+  covers: readonly Box[],
+  tuning: Tuning,
+  pierce = false,
+): ShotHit[] {
+  const all = candidates(ray, actors, covers, tuning);
+  if (!pierce) return all.slice(0, 1);
+  const out: ShotHit[] = [];
+  for (const h of all) {
+    if (h.kind === 'cover') continue;
+    // A pierced shield is a body hit.
+    out.push(h.kind === 'shield' ? { kind: 'actor', actor: h.actor, zone: 'body', t: h.t } : h);
+  }
+  return out;
+}
+
+/**
+ * Directions for every pellet of one shot: the aim direction, then the rest evenly around a cone of
+ * the given half-angle. Fixed, not random, so a seed and an input log still fully determine a run.
+ */
+export function pelletDirections(direction: Vec3, pellets: number, spread: number): Vec3[] {
+  const d = normalize(direction);
+  if (pellets <= 1 || spread <= 0) return [d];
+  // Two axes perpendicular to the aim direction.
+  const helper = Math.abs(d.y) < 0.9 ? vec(0, 1, 0) : vec(1, 0, 0);
+  const u = normalize(cross(d, helper));
+  const v = cross(d, u);
+  const out = [d];
+  const ring = pellets - 1;
+  const tan = Math.tan(spread);
+  for (let i = 0; i < ring; i++) {
+    const a = (i / ring) * Math.PI * 2;
+    out.push(normalize(add(d, add(scale(u, Math.cos(a) * tan), scale(v, Math.sin(a) * tan)))));
+  }
+  return out;
 }
 
 export function isHittable(actor: Actor): boolean {
-  return (
-    actor.phase === 'entering' ||
-    actor.phase === 'waiting' ||
-    actor.phase === 'aiming' ||
-    actor.phase === 'standing'
-  );
+  const p = actor.phase;
+  return p === 'entering' || p === 'waiting' || p === 'aiming' || p === 'standing' || p === 'flying';
 }

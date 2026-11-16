@@ -1,12 +1,28 @@
 import { describe, expect, it } from 'vitest';
-import { createWeapon, startReload, tickWeapon, tryFire, weaponSpec } from '../../src/sim/weapons.ts';
+import {
+  createWeapon,
+  dropSpecial,
+  pickUp,
+  startReload,
+  tickWeapon,
+  tryFire,
+  weaponSpec,
+  weaponSpecs,
+  type Armoury,
+} from '../../src/sim/weapons.ts';
 import { tuning } from '../helpers.ts';
 
 const spec = weaponSpec(tuning().revolver, 60);
 
 describe('revolver', () => {
   it('derives frame timings from tuning', () => {
-    expect(spec).toEqual({ capacity: 6, cooldownFrames: 8, reloadFrames: 21 });
+    expect(spec).toMatchObject({
+      kind: 'revolver',
+      capacity: 6,
+      cooldownFrames: 8,
+      reloadFrames: 21,
+      reloadable: true,
+    });
   });
 
   it('never exceeds 8 shots per second', () => {
@@ -48,6 +64,29 @@ describe('revolver', () => {
     const w = createWeapon(spec);
     expect(startReload(w, spec)).toBe(false);
     expect(w.reloading).toBe(0);
+  });
+
+  it('never reloads a special weapon', () => {
+    const specs = weaponSpecs(tuning());
+    const w = createWeapon(specs.shotgun);
+    tryFire(w, specs.shotgun);
+    expect(startReload(w, specs.shotgun)).toBe(false);
+    expect(specs.machine_pistol).toMatchObject({ capacity: 30, auto: true, cooldownFrames: 5 });
+    expect(specs.magnum).toMatchObject({ pierce: true, cooldownFrames: 20 });
+    expect(specs.shotgun.pellets).toBe(7);
+  });
+
+  it('stashes the revolver on pickup and gives it back on drop', () => {
+    const specs = weaponSpecs(tuning());
+    const armoury: Armoury = { current: createWeapon(specs.revolver), stashedRevolverAmmo: null };
+    armoury.current.ammo = 2;
+    pickUp(armoury, 'magnum', specs);
+    expect(armoury.current).toMatchObject({ kind: 'magnum', ammo: 6, capacity: 6 });
+    pickUp(armoury, 'shotgun', specs); // swapping specials keeps the stashed revolver
+    dropSpecial(armoury, specs);
+    expect(armoury.current).toMatchObject({ kind: 'revolver', ammo: 2, capacity: 6 });
+    dropSpecial(armoury, specs); // no stash: a full revolver
+    expect(armoury.current.ammo).toBe(6);
   });
 
   it('reloads instantly when reload time is zero', () => {

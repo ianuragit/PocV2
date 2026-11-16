@@ -1,5 +1,7 @@
 import type { Game } from '../../src/sim/game.ts';
-import type { GameEvent, Input, Tuning } from '../../src/sim/types.ts';
+import { hitZones } from '../../src/sim/shots.ts';
+import type { Actor, GameEvent, Input, Tuning } from '../../src/sim/types.ts';
+import type { Vec3 } from '../../src/sim/vec.ts';
 import { aimAt, bodyCenter } from '../helpers.ts';
 
 export interface BotResult {
@@ -7,11 +9,19 @@ export interface BotResult {
   events: { frame: number; event: GameEvent }[];
 }
 
-const HITTABLE = new Set(['entering', 'waiting', 'aiming']);
+const HITTABLE = new Set(['entering', 'waiting', 'aiming', 'flying']);
+
+/** Where the bot aims: thrown objects themselves, shield carriers in the head, everyone else in the body. */
+function aimPoint(a: Actor, tuning: Tuning): Vec3 {
+  if (a.role === 'projectile') return a.position;
+  if (tuning.enemies[a.type]?.shield) return hitZones(a, tuning.body).head.center;
+  return bodyCenter(a, tuning);
+}
 
 /**
- * The clearing bot: shoots each enemy in the body `reactionSeconds` after it spawns,
- * in spawn order, and reloads the moment the cylinder is empty. It never shoots civilians.
+ * The clearing bot: shoots each hostile `reactionSeconds` after it appears, thrown objects first,
+ * then in spawn order, and reloads the moment the cylinder is empty. It never shoots civilians
+ * or crates, so its score is a pure revolver run.
  */
 export function runClearingBot(
   game: Game,
@@ -37,10 +47,14 @@ export function runClearingBot(
       if (state.weapon.reloading === 0) inputs.push({ type: 'reload' });
       continue;
     }
+    for (const a of state.actors) if (!spawnedAt.has(a.id)) spawnedAt.set(a.id, state.frame);
     const target = state.actors
-      .filter((a) => !a.civilian && HITTABLE.has(a.phase) && state.frame - spawnedAt.get(a.id)! >= reaction)
-      .sort((a, b) => a.id - b.id)[0];
-    if (target) inputs.push(aimAt(game, bodyCenter(target, tuning)));
+      .filter(
+        (a) => (a.role === 'enemy' || a.role === 'boss' || a.role === 'projectile') && HITTABLE.has(a.phase),
+      )
+      .filter((a) => state.frame - spawnedAt.get(a.id)! >= reaction)
+      .sort((a, b) => Number(b.role === 'projectile') - Number(a.role === 'projectile') || a.id - b.id)[0];
+    if (target) inputs.push(aimAt(game, aimPoint(target, tuning)));
   }
   throw new Error('clearing bot: stage never ended');
 }

@@ -1,6 +1,6 @@
 import { pathFromMarkers, pathMarkerNames, type RailPath } from './path.ts';
 import { add, fromArray, scale, sub, vec, type Vec3 } from './vec.ts';
-import type { Markers, StageDef, Tuning } from './types.ts';
+import type { ActorRole, Markers, SpecialWeapon, StageDef, Tuning } from './types.ts';
 
 export interface Box {
   name: string;
@@ -8,9 +8,17 @@ export interface Box {
   max: Vec3;
 }
 
+export function roleOf(type: string): ActorRole {
+  return type === 'civilian' || type === 'crate' || type === 'boss' ? type : 'enemy';
+}
+
 export interface ResolvedSpawn {
   type: string;
+  role: ActorRole;
   civilian: boolean;
+  weapon?: SpecialWeapon;
+  /** Boss: where it stands in each phase. */
+  phases?: { position: Vec3; yaw: number }[];
   position: Vec3;
   yaw: number;
   entryFrames: number;
@@ -30,6 +38,7 @@ export interface ResolvedStop {
 export interface ResolvedStage {
   id: string;
   name: string;
+  rankThresholds: StageDef['rank_thresholds'];
   path: RailPath;
   stops: ResolvedStop[];
   covers: Box[];
@@ -102,16 +111,38 @@ export function validateStage(raw: unknown, markers: Markers, tuning: Tuning): s
         if (!isObject(wave) || !Array.isArray(wave.spawns) || wave.spawns.length === 0) {
           return err(`${wp}.spawns`, 'must be a non-empty array');
         }
-        if (!wave.spawns.some((s: unknown) => isObject(s) && s.type !== 'civilian')) {
+        if (!wave.spawns.some((s: unknown) => isObject(s) && s.type !== 'civilian' && s.type !== 'crate')) {
           err(wp, 'needs at least one enemy, or it can never be cleared');
         }
         wave.spawns.forEach((spawn: unknown, xi) => {
           const xp = `${wp}.spawns[${xi}]`;
           if (!isObject(spawn)) return err(xp, 'must be an object');
-          if (spawn.type !== 'civilian' && !(isStr(spawn.type) && tuning.enemies[spawn.type])) {
+          const known = spawn.type === 'civilian' || spawn.type === 'crate' || spawn.type === 'boss';
+          if (!known && !(isStr(spawn.type) && tuning.enemies[spawn.type])) {
             err(`${xp}.type`, `unknown type "${String(spawn.type)}"`);
           }
-          marker(`${xp}.marker`, spawn.marker, 'Spawn_');
+          marker(`${xp}.marker`, spawn.marker, spawn.type === 'crate' ? 'Crate_' : 'Spawn_');
+          if (spawn.type === 'crate') {
+            if (!isStr(spawn.weapon) || !(spawn.weapon in tuning.specials)) {
+              err(`${xp}.weapon`, `crates need a weapon: one of ${Object.keys(tuning.specials).join(', ')}`);
+            }
+          } else if (spawn.weapon !== undefined) {
+            err(`${xp}.weapon`, 'only crates hold weapons');
+          }
+          if (spawn.type === 'boss') {
+            const want = tuning.boss.phases.length;
+            if (!Array.isArray(spawn.phase_markers) || spawn.phase_markers.length !== want) {
+              err(`${xp}.phase_markers`, `the boss needs ${want} phase markers, one per phase`);
+            } else {
+              spawn.phase_markers.forEach((m: unknown, mi: number) =>
+                marker(`${xp}.phase_markers[${mi}]`, m, 'Spawn_'),
+              );
+              if (spawn.phase_markers[0] !== spawn.marker)
+                err(`${xp}.phase_markers[0]`, 'must be the same as marker');
+            }
+          } else if (spawn.phase_markers !== undefined) {
+            err(`${xp}.phase_markers`, 'only the boss has phase markers');
+          }
           if (!isStr(spawn.entry) || tuning.entries[spawn.entry] === undefined) {
             err(`${xp}.entry`, `unknown entry "${String(spawn.entry)}"`);
           }
@@ -143,12 +174,17 @@ export function resolveStage(raw: unknown, markers: Markers, tuning: Tuning): Re
       waves: stop.waves.map((wave) =>
         wave.spawns.map((s) => ({
           type: s.type,
+          role: roleOf(s.type),
           civilian: s.type === 'civilian',
           position: pos(s.marker),
           yaw: markers[s.marker]!.rotation[1],
           entryFrames: frames(tuning.entries[s.entry]!),
           delayFrames: frames(s.delay),
           ...(s.aim_time !== undefined ? { aimTime: s.aim_time } : {}),
+          ...(s.weapon !== undefined ? { weapon: s.weapon } : {}),
+          ...(s.phase_markers
+            ? { phases: s.phase_markers.map((m) => ({ position: pos(m), yaw: markers[m]!.rotation[1] })) }
+            : {}),
         })),
       ),
     })),
@@ -162,5 +198,12 @@ export function resolveStage(raw: unknown, markers: Markers, tuning: Tuning): Re
       return { name, min: sub(center, half), max: add(center, scale(half, 1)) };
     });
 
-  return { id: stage.id, name: stage.name, path: pathFromMarkers(markers), stops, covers };
+  return {
+    id: stage.id,
+    name: stage.name,
+    rankThresholds: stage.rank_thresholds,
+    path: pathFromMarkers(markers),
+    stops,
+    covers,
+  };
 }
