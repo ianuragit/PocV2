@@ -78,12 +78,13 @@ test.describe('M7: robustness and accessibility', () => {
 });
 
 test.describe('M7: clean runs', () => {
+  // Long in-page runs: the timeout must also cover browser-context setup after the previous heavy test.
+  test.describe.configure({ timeout: 180_000 });
   for (const { stage, score } of [
     { stage: 2, score: 67_700 },
     { stage: 3, score: 65_300 },
   ]) {
     test(`stage ${stage} plays start to finish in the browser with no console errors`, async ({ page }) => {
-      test.setTimeout(150_000);
       const errors = watchErrors(page);
       await openGame(page, `stage=${stage}&seed=42&test=1`);
       await page.getByText('CLICK TO START').click();
@@ -97,13 +98,13 @@ test.describe('M7: clean runs', () => {
 });
 
 test.describe('M7: every enemy can be shot from the screen', () => {
+  test.describe.configure({ timeout: 180_000 });
   for (const { stage, stops } of [
     { stage: 1, stops: 10 },
     { stage: 2, stops: 9 },
     { stage: 3, stops: 9 },
   ]) {
     test(`stage ${stage}: every enemy appears on screen, away from the reload border`, async ({ page }) => {
-      test.setTimeout(120_000);
       await openGame(page, `stage=${stage}&seed=42&test=1&god=1`);
       const offscreen = await page.evaluate((stops) => {
         const g = (window as unknown as { __game: DebugHooks }).__game;
