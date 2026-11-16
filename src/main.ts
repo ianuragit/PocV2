@@ -24,8 +24,10 @@ async function boot(): Promise<void> {
   const difficulty = params.get('difficulty');
   const stop = Math.max(0, Number(params.get('stop') ?? '1') - 1);
 
+  const loading = new Screens();
+  loading.show('loading');
   try {
-    const data = await loadGameData(stageId);
+    const data = await loadGameData(stageId, (f) => loading.setProgress(f));
     const app = new App({
       data,
       stageId,

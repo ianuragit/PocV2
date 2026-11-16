@@ -28,6 +28,7 @@ Design: docs/design.md. Build spec: docs/spec.md.
 - Relative imports use explicit .ts extensions, so tools/ can run with plain `node` and reuse src/sim.
 - Saves go through src/save/saveStore.ts only; treat stored and imported data as untrusted.
 - Do not add dependencies without asking. Do not add or download assets; use primitives and ask.
+- Audio is synthesized in src/view/audio.ts (effects) and src/view/music.ts (note data). No audio files.
 - After any view or UI change, run the browser test and look at the screenshots before saying it is done.
 - Stay inside the size budgets. If a change breaks one, say so instead of raising the budget.
 - One issue per PR. If a task needs a judgment about feel, stop and ask for numbers.

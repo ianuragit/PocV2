@@ -23,6 +23,10 @@ export interface DebugHooks {
   aimScreen(id: number): ScreenPoint | null;
   /** The rings the last frame drew. */
   rings(): DrawnRing[];
+  /** Draw calls and triangles in the last rendered frame. */
+  renderInfo(): { calls: number; triangles: number };
+  /** Sounds played so far, by name, and whether audio is running. */
+  audio(): { played: Record<string, number>; unlocked: boolean };
 }
 
 export function installDebugHooks(app: App): void {
@@ -65,6 +69,11 @@ export function installDebugHooks(app: App): void {
       return project(app.renderer.camera, p, surface.clientWidth, surface.clientHeight);
     },
     rings: () => app.overlay.lastRings,
+    renderInfo: () => ({
+      calls: app.renderer.gl.info.render.calls,
+      triangles: app.renderer.gl.info.render.triangles,
+    }),
+    audio: () => ({ played: { ...app.audio.played }, unlocked: app.audio.unlocked }),
   };
   (window as unknown as { __game: DebugHooks }).__game = hooks;
 }

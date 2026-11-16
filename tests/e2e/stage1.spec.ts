@@ -130,6 +130,11 @@ test.describe('stage 1 (M3 + M4 acceptance)', () => {
       expect(state.stop, `stop ${stop}`).toBe(stop - 1);
       expect(state.actors.length, `stop ${stop} has actors`).toBeGreaterThan(0);
       await snap(page, `stage1-stop-${stop}`);
+      // Rendering target from the spec: under 150 draw calls per frame.
+      const info = await page.evaluate(() =>
+        (window as unknown as { __game: DebugHooks }).__game.renderInfo(),
+      );
+      expect(info.calls, `stop ${stop} draw calls`).toBeLessThan(150);
     }
     expect(errors).toEqual([]);
   });

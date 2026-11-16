@@ -1,17 +1,26 @@
 import {
+  AdditiveBlending,
   CapsuleGeometry,
+  Color,
   Group,
   Mesh,
   MeshBasicMaterial,
+  MeshLambertMaterial,
+  OctahedronGeometry,
   SphereGeometry,
   Vector3,
   type Material,
 } from 'three';
-import type { Actor, Tuning } from '../sim/index.ts';
+import type { Actor, GameEvent, Tuning } from '../sim/index.ts';
 import { buildCharacter, buildCrate, buildProjectile } from './characters.ts';
 
 const RESOLVED = new Set(['dead', 'disarmed', 'fled', 'opened']);
 const FADE_SECONDS = 0.5;
+/** How long a struck actor glows white, and how long an enemy's muzzle flash shows. */
+const HIT_FLASH_SECONDS = 0.09;
+const MUZZLE_SECONDS = 0.07;
+const WHITE = new Color(0xffffff);
+const BLACK = new Color(0x000000);
 
 interface Entry {
   root: Group;
@@ -21,6 +30,12 @@ interface Entry {
   gunArm?: Group;
   offArm?: Group;
   gun?: Mesh | null;
+  legs?: Group[];
+  muzzleFlash?: Mesh;
+  thrower?: boolean;
+  /** Seconds left on the white hit flash and the muzzle flash. */
+  hitFlash: number;
+  muzzleTime: number;
   debug: Group | null;
   entryTotal: number;
   resolvedFor: number;
@@ -31,6 +46,15 @@ interface Entry {
   /** Boss: where it was standing when a move started. */
   moveFrom?: Vector3;
 }
+
+const muzzleGeometry = new OctahedronGeometry(0.13, 0);
+const muzzleMaterial = new MeshBasicMaterial({
+  color: 0xfff1a0,
+  transparent: true,
+  opacity: 0.95,
+  blending: AdditiveBlending,
+  depthWrite: false,
+});
 
 /**
  * Draws every actor. Reads simulation state; never writes it. People are blocky characters whose
@@ -77,6 +101,8 @@ export class ActorsView {
       age: 0,
       seed: actor.id * 1.7,
       debug: null,
+      hitFlash: 0,
+      muzzleTime: 0,
     };
     let e: Entry;
     if (actor.role === 'crate') {
@@ -94,15 +120,40 @@ export class ActorsView {
       );
       const debug = this.buildDebugZones();
       c.root.add(debug);
-      e = { ...base, ...c, debug };
+      const flash = new Mesh(muzzleGeometry, muzzleMaterial);
+      flash.position.set(c.muzzle.x, c.muzzle.y, c.muzzle.z);
+      flash.visible = false;
+      c.root.add(flash);
+      e = { ...base, ...c, debug, muzzleFlash: flash, thrower: def?.attack === 'throw' };
     }
     e.root.position.set(actor.position.x, actor.position.y, actor.position.z);
     e.root.rotation.y = actor.yaw;
     return e;
   }
 
+  /** Effects driven by simulation events: hit flashes and enemy muzzle flashes. */
+  onEvents(events: readonly GameEvent[]): void {
+    for (const ev of events) {
+      if (ev.type === 'EnemyHit' || ev.type === 'ShieldBlock') {
+        const e = this.entries.get(ev.id);
+        if (e) e.hitFlash = HIT_FLASH_SECONDS;
+      } else if (ev.type === 'RingClosed') {
+        const e = this.entries.get(ev.id);
+        if (e && !e.thrower) e.muzzleTime = MUZZLE_SECONDS;
+      }
+    }
+  }
+
   private update(e: Entry, actor: Actor, dt: number): void {
     e.age += dt;
+    e.hitFlash = Math.max(0, e.hitFlash - dt);
+    e.muzzleTime = Math.max(0, e.muzzleTime - dt);
+    if (e.muzzleFlash) {
+      e.muzzleFlash.visible = e.muzzleTime > 0;
+      e.muzzleFlash.rotation.z = e.age * 40;
+    }
+    const glow = e.hitFlash > 0 ? WHITE : BLACK;
+    for (const m of e.materials) if (m instanceof MeshLambertMaterial) m.emissive.copy(glow);
     let opacity = 1;
 
     if (actor.phase === 'entering') {
@@ -133,6 +184,12 @@ export class ActorsView {
       const t = e.age + e.seed;
       e.torso.position.y = Math.sin(t * 3) * 0.008;
       e.torso.rotation.z = actor.phase === 'aiming' ? Math.sin(t * 9) * 0.015 : 0;
+      // Stepping in: legs swing while entering, then settle.
+      const swing = actor.phase === 'entering' ? Math.sin(e.age * 14) * 0.45 : 0;
+      if (e.legs) {
+        e.legs[0]!.rotation.x = swing;
+        e.legs[1]!.rotation.x = -swing;
+      }
     }
 
     if (RESOLVED.has(actor.phase)) {

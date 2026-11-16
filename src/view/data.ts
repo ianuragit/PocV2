@@ -1,4 +1,4 @@
-import { Mesh, MeshLambertMaterial, type Group, type Material } from 'three';
+import { Mesh, MeshBasicMaterial, MeshLambertMaterial, type Group, type Material } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import type { Markers, Tuning } from '../sim/index.ts';
 
@@ -19,16 +19,21 @@ async function getJson<T>(path: string): Promise<T> {
 }
 
 /**
- * Loads a stage .glb and gives it the arcade look: vertex colours under flat Lambert shading.
+ * Loads a stage .glb and gives it the arcade look: vertex colours under flat Lambert shading, with
+ * light fittings (meshes named Lights*) unlit.
  * Marker empties carry no mesh, so nothing needs hiding; the simulation reads them from markers.json.
  */
-export async function loadEnvironment(path: string): Promise<Group> {
-  const gltf = await new GLTFLoader().loadAsync(url(`assets/${path}`));
+export async function loadEnvironment(path: string, onProgress?: (fraction: number) => void): Promise<Group> {
+  const gltf = await new GLTFLoader().loadAsync(url(`assets/${path}`), (e) => {
+    if (onProgress && e.lengthComputable && e.total > 0) onProgress(e.loaded / e.total);
+  });
   const shared = new MeshLambertMaterial({ vertexColors: true, flatShading: true });
+  // Meshes named Lights* are light fittings: drawn unlit so they glow.
+  const glow = new MeshBasicMaterial({ vertexColors: true });
   gltf.scene.traverse((o) => {
     if (o instanceof Mesh) {
       (o.material as Material).dispose();
-      o.material = shared;
+      o.material = o.name.startsWith('Lights') ? glow : shared;
       o.matrixAutoUpdate = false;
       o.updateMatrix();
     }
@@ -37,13 +42,24 @@ export async function loadEnvironment(path: string): Promise<Group> {
   return gltf.scene;
 }
 
-export async function loadGameData(stageId: string): Promise<GameData> {
+/**
+ * Loads everything a stage needs. Progress runs 0..1: the small JSON files count for the first 10%,
+ * the stage model (by bytes received) for the rest.
+ */
+export async function loadGameData(
+  stageId: string,
+  onProgress: (fraction: number) => void = () => {},
+): Promise<GameData> {
+  onProgress(0);
   const [tuning, stage, markers] = await Promise.all([
     getJson<Tuning>('data/tuning.json'),
     getJson<{ environment?: string }>(`data/stages/${stageId}.json`),
     getJson<Markers>(`data/stages/${stageId}.markers.json`),
   ]);
+  onProgress(0.1);
   const env = stage.environment;
-  const environment = env && env !== 'procedural' ? await loadEnvironment(env) : null;
+  const environment =
+    env && env !== 'procedural' ? await loadEnvironment(env, (f) => onProgress(0.1 + 0.9 * f)) : null;
+  onProgress(1);
   return { tuning, stage, markers, environment };
 }

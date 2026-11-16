@@ -22,6 +22,10 @@ export interface Character {
   gunArm: Group;
   offArm: Group;
   gun: Mesh | null;
+  /** Hip pivots, left then right. */
+  legs: Group[];
+  /** Where the gun's muzzle is, in the character's local space (for muzzle flashes). */
+  muzzle: { x: number; y: number; z: number };
   materials: Material[];
 }
 
@@ -54,13 +58,18 @@ export function buildCharacter(type: string, opts: CharacterOptions, body: Tunin
   const hip = body.body_bottom + 0.6; // top of the legs
   const shoulder = body.body_top;
 
+  // Each leg hangs from a hip pivot so it can swing when the actor steps in.
+  const legs: Group[] = [];
   for (const side of [-1, 1]) {
+    const pivot = new Group();
+    pivot.position.set(side * 0.11, hip, 0);
     const leg = box(0.17, hip, 0.2, pants);
-    leg.position.set(side * 0.11, hip / 2, 0);
-    root.add(leg);
+    leg.position.y = -hip / 2;
     const shoe = box(0.19, 0.08, 0.28, trim);
-    shoe.position.set(side * 0.11, 0.04, 0.04);
-    root.add(shoe);
+    shoe.position.set(0, -hip + 0.04, 0.04);
+    pivot.add(leg, shoe);
+    root.add(pivot);
+    legs.push(pivot);
   }
 
   const torso = new Group();
@@ -153,7 +162,16 @@ export function buildCharacter(type: string, opts: CharacterOptions, body: Tunin
       part.add(shell);
     }
   }
-  return { root, torso, gunArm, offArm, gun, materials };
+  return {
+    root,
+    torso,
+    gunArm,
+    offArm,
+    gun,
+    legs,
+    muzzle: { x: -hr, y: hu + 0.07, z: hf + 0.24 },
+    materials,
+  };
 }
 
 /** A sleeve and a hand from one point to another, as a group rotated to point at the hand. */
