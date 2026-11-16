@@ -94,6 +94,12 @@ export class InputCapture {
   }
 
   private onPointerDown(e: PointerEvent): void {
+    // The on-screen reload button (touch devices) reloads; it is never a shot.
+    if ((e.target as HTMLElement).closest?.('#touch-reload')) {
+      e.preventDefault();
+      this.queueReload();
+      return;
+    }
     const p = this.local(e);
     this.pointer = p;
     if (this.handlers.onAction('click')) return;

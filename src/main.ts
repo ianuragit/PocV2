@@ -23,6 +23,9 @@ function storage(): Storage | null {
 
 async function boot(): Promise<void> {
   document.querySelector('#version')!.textContent = `build ${__COMMIT__}`;
+  // Touch screens get an on-screen reload button (there is no right click or keyboard).
+  const touch = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+  document.querySelector('#stage')!.classList.toggle('touch', touch);
   const params = new URLSearchParams(location.search);
   const debug = params.get('debug') === '1';
   const stageId = stageFromUrl(params.get('stage'));

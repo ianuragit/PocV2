@@ -341,7 +341,7 @@ look('Boss', STOPS.boss, 16, 2);
 spawn('BossDeck', STOPS.boss, 18, 0, 1.2);
 spawn('BossBow', STOPS.boss, 17, 3.5, 1.2);
 spawn('BossStern', STOPS.boss, 17, -3.5, 1.2);
-spawn('BossGuardL', STOPS.boss, 5.5, 5.5);
-spawn('BossGuardR', STOPS.boss, 2.5, -6.5);
+spawn('BossGuardL', STOPS.boss, 5.5, 4);
+spawn('BossGuardR', STOPS.boss, 5.5, -2);
 
 kit.write('public/assets/stages/stage2.glb', { Lot: lot, Studio: studio, Props: props, Tank: tank }, STOPS);

@@ -480,25 +480,25 @@
   },
   "Spawn_BossGuardL": {
     "position": [
-      -5.5,
+      -4,
       0,
       175.53
     ],
     "rotation": [
       0,
-      2.3562,
+      2.5128,
       0
     ]
   },
   "Spawn_BossGuardR": {
     "position": [
-      6.5,
+      2,
       0,
-      172.53
+      175.53
     ],
     "rotation": [
       0,
-      -1.938,
+      -2.7928,
       0
     ]
   },

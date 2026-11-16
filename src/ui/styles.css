@@ -555,3 +555,28 @@ body {
   -webkit-text-stroke: 0.25cqh var(--ink);
   paint-order: stroke fill;
 }
+
+/* ---------- M7: touch reload ---------- */
+
+.touch-reload {
+  display: none;
+  position: absolute;
+  left: 2.5cqh;
+  bottom: 2.5cqh;
+  width: 16cqh;
+  height: 16cqh;
+  border-radius: 50%;
+  border: 0.6cqh solid var(--fg);
+  background: rgba(216, 50, 60, 0.75);
+  color: var(--fg);
+  font-family: var(--arcade);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 2.8cqh;
+  touch-action: none;
+  cursor: pointer;
+}
+
+#stage.touch.playing .touch-reload {
+  display: block;
+}

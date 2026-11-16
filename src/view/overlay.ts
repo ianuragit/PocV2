@@ -102,6 +102,8 @@ export class Overlay {
     showCrosshair: boolean;
     borderZone: boolean;
     debug: boolean;
+    /** No blinking when the player has asked for fewer flashes. */
+    reducedFlash?: boolean;
   }): void {
     const { w, h } = this.fit();
     const ctx = this.ctx;
@@ -121,7 +123,10 @@ export class Overlay {
       const radius = Math.abs(c.y - t.y) * ring.scale;
       const color = this.ringColor(ring.progress);
       // About to fire: blink, so the next shot is never a surprise.
-      const blinkOff = ring.progress >= this.tuning.rings.red_at && Math.floor(this.clock * 16) % 2 === 1;
+      const blinkOff =
+        !opts.reducedFlash &&
+        ring.progress >= this.tuning.rings.red_at &&
+        Math.floor(this.clock * 16) % 2 === 1;
       if (!blinkOff) drawSight(ctx, c.x, c.y, radius, ring.progress, color, h);
       if (opts.debug) {
         ctx.fillStyle = '#fff';

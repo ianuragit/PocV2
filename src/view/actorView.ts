@@ -132,11 +132,12 @@ export class ActorsView {
   }
 
   /** Effects driven by simulation events: hit flashes and enemy muzzle flashes. */
-  onEvents(events: readonly GameEvent[]): void {
+  onEvents(events: readonly GameEvent[], reducedFlash = false): void {
     for (const ev of events) {
       if (ev.type === 'EnemyHit' || ev.type === 'ShieldBlock') {
         const e = this.entries.get(ev.id);
-        if (e) e.hitFlash = HIT_FLASH_SECONDS;
+        // With reduced flash the struck actor does not flash white; the spark and sound still show the hit.
+        if (e && !reducedFlash) e.hitFlash = HIT_FLASH_SECONDS;
       } else if (ev.type === 'RingClosed') {
         const e = this.entries.get(ev.id);
         if (e && !e.thrower) e.muzzleTime = MUZZLE_SECONDS;
