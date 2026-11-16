@@ -9,9 +9,19 @@
   <body>
     <div id="stage">
       <canvas id="game"></canvas>
-      <div id="title" class="overlay">
+      <canvas id="overlay"></canvas>
+      <div id="hud" class="hidden">
+        <div class="hud-score"><span id="score">0</span><span id="combo"></span></div>
+        <div class="hud-lives" id="lives"></div>
+        <div class="hud-ammo" id="ammo"></div>
+        <div class="hud-reload" id="reload">RELOAD</div>
+        <div class="hud-banner" id="banner"></div>
+      </div>
+      <div id="flash"></div>
+      <div id="popups"></div>
+      <div id="screen" class="screen">
         <h1>REAL COP 2</h1>
-        <p class="blink">Click to start</p>
+        <p class="blink">Loading…</p>
       </div>
       <div id="version" class="version"></div>
     </div>

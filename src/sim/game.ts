@@ -14,6 +14,10 @@ export interface GameOptions {
   tuning: Tuning;
   difficulty: Difficulty;
   seed: number;
+  /** Debug: begin by travelling to this stop index instead of stop 0. */
+  startStop?: number;
+  /** Debug: the player never loses a life. */
+  god?: boolean;
 }
 
 export interface Game {
@@ -45,14 +49,22 @@ export function createGame(opts: GameOptions): Game {
   const invulnerableFrames = frames(tuning.player.invulnerable_time);
   const ringPauseFrames = frames(tuning.player.ring_pause_on_hit);
 
-  const firstStop = stage.stops[0]!;
+  const startStop = opts.startStop ?? 0;
+  if (!Number.isInteger(startStop) || startStop < 0 || startStop >= stage.stops.length) {
+    throw new Error(`startStop must be 0..${stage.stops.length - 1}`);
+  }
+  const startOffset = startStop === 0 ? 0 : stage.stops[startStop - 1]!.pathOffset;
   const state: GameState = {
     frame: 0,
     phase: 'travel',
     paused: false,
     difficulty,
-    camera: { position: stage.path.pointAt(0), lookAt: firstStop.lookAt, pathOffset: 0 },
-    stop: 0,
+    camera: {
+      position: stage.path.pointAt(startOffset),
+      lookAt: stage.stops[startStop]!.lookAt,
+      pathOffset: startOffset,
+    },
+    stop: startStop,
     wave: 0,
     actors: [],
     rings: [],
@@ -67,6 +79,7 @@ export function createGame(opts: GameOptions): Game {
   let nextId = 1;
 
   function loseLife(events: GameEvent[], cause: 'shot' | 'civilian'): void {
+    if (opts.god) return;
     state.lives = Math.max(0, state.lives - 1);
     events.push({ type: 'PlayerHit', lives: state.lives, cause });
     if (state.lives === 0) {
@@ -193,7 +206,7 @@ export function createGame(opts: GameOptions): Game {
       return;
     }
     for (const actor of advanceRings(actors)) {
-      const hit = !isOver() && !protectedThisStep && state.invulnerable === 0;
+      const hit = !isOver() && !opts.god && !protectedThisStep && state.invulnerable === 0;
       events.push({ type: 'RingClosed', id: actor.id, hit });
       actor.shots += 1;
       actor.phase = 'waiting';

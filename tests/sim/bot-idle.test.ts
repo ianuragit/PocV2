@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { newGame } from '../helpers';
+import { newGame, readJson } from '../helpers';
 import { runIdleBot } from './bots';
 
 describe('idle bot on stage 1', () => {
@@ -33,3 +33,14 @@ describe('idle bot on stage 1', () => {
  * re-aims (+-10% jitter) hit at 348, 417 and 536.
  */
 const IDLE_GAME_OVER_FRAME = 536;
+
+describe('idle bot on the firing range', () => {
+  it('a wave of 5 beats a player who never shoots', () => {
+    const game = newGame({
+      stage: readJson('public/data/stages/range.json'),
+      markers: readJson('public/data/stages/range.markers.json'),
+    });
+    runIdleBot(game);
+    expect(game.state.phase).toBe('gameOver');
+  });
+});

@@ -1,0 +1,65 @@
+{
+  "id": "range",
+  "name": "Firing Range",
+  "environment": "stages/range.glb",
+  "music": "audio/music/range.ogg",
+  "rank_thresholds": {
+    "S": 3000,
+    "A": 2000,
+    "B": 1000
+  },
+  "scenes": [
+    {
+      "id": "range",
+      "stops": [
+        {
+          "path_offset": 2,
+          "travel_speed": 4,
+          "look_at": "Look_Range",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_R2",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_R4",
+                  "entry": "lean_out",
+                  "delay": 0.4
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_R1",
+                  "entry": "run_in",
+                  "delay": 0.8
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_R5",
+                  "entry": "run_in",
+                  "delay": 1.2
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_R3",
+                  "entry": "stand_up",
+                  "delay": 1.6
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_Bystander",
+                  "entry": "run_in",
+                  "delay": 1.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

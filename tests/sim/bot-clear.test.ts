@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { multiplierFor } from '../../src/sim/score';
-import { newGame, tuning } from '../helpers';
+import { newGame, readJson, tuning } from '../helpers';
 import { runClearingBot } from './bots';
 
 describe('clearing bot on stage 1', () => {
@@ -36,5 +36,17 @@ describe('clearing bot on stage 1', () => {
       runClearingBot(game, tuning());
       expect(game.state.phase, difficulty).toBe('stageClear');
     }
+  });
+});
+
+describe('clearing bot on the firing range', () => {
+  it('clears a wave of 5 with 5 straight body hits', () => {
+    const game = newGame({
+      stage: readJson('public/data/stages/range.json'),
+      markers: readJson('public/data/stages/range.markers.json'),
+    });
+    runClearingBot(game, tuning());
+    expect(game.state.phase).toBe('stageClear');
+    expect(game.state.score.score).toBe(200 * 3 + 400 * 2);
   });
 });

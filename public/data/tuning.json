@@ -7,7 +7,7 @@
     "normal": { "lives": 5, "max_rings": 3, "aim_time_scale": 1.0 },
     "hard": { "lives": 3, "max_rings": 4, "aim_time_scale": 0.85 }
   },
-  "rings": { "start_scale": 3, "end_scale": 1, "reaim_jitter": 0.1 },
+  "rings": { "start_scale": 3, "end_scale": 1, "reaim_jitter": 0.1, "amber_at": 0.45, "red_at": 0.75 },
   "revolver": { "capacity": 6, "max_shots_per_second": 8, "reload_time": 0.35 },
   "scoring": { "gun_hand": 500, "head": 300, "body": 200, "thrown": 100, "combo_step": 3, "combo_cap": 5 },
   "director": { "wave_gap": 0.5 },

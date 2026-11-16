@@ -10,9 +10,17 @@ export const stage1 = (): unknown => readJson('public/data/stages/stage1.json');
 export const stage1Markers = (): Markers => readJson<Markers>('public/data/stages/stage1.markers.json');
 
 export function newGame(
-  opts: { difficulty?: Difficulty; seed?: number; tuning?: Tuning; stage?: unknown; markers?: Markers } = {},
+  opts: {
+    difficulty?: Difficulty;
+    seed?: number;
+    tuning?: Tuning;
+    stage?: unknown;
+    markers?: Markers;
+    startStop?: number;
+  } = {},
 ): Game {
   return createGame({
+    ...(opts.startStop !== undefined ? { startStop: opts.startStop } : {}),
     stage: opts.stage ?? stage1(),
     markers: opts.markers ?? stage1Markers(),
     tuning: opts.tuning ?? tuning(),

@@ -3,7 +3,7 @@ import { createGame } from '../../src/sim/game';
 import { hitZones } from '../../src/sim/shots';
 import { vec, type Vec3 } from '../../src/sim/vec';
 import type { Difficulty, GameEvent, Markers, SpawnDef, Tuning } from '../../src/sim/types';
-import { aimAt, bodyCenter, tuning } from '../helpers';
+import { aimAt, bodyCenter, newGame, runUntil, tuning } from '../helpers';
 
 const P = (x: number, y: number, z: number, yaw = 0) => ({
   position: [x, y, z] as [number, number, number],
@@ -266,6 +266,35 @@ describe('game flow', () => {
     expect(hard.actor(1).aimFrames).toBe(102);
     expect(easy.game.state.lives).toBe(7);
     expect(hard.game.state.lives).toBe(3);
+  });
+
+  it('can start at a later stop for debugging', () => {
+    const game = newGame({ startStop: 3 });
+    expect(game.state.stop).toBe(3);
+    expect(game.state.camera.pathOffset).toBe(18);
+    expect(runUntil(game, (e) => e.type === 'StopReached')).toContainEqual({ type: 'StopReached', stop: 3 });
+    expect(() => newGame({ startStop: 5 })).toThrow(/startStop/);
+    expect(() => newGame({ startStop: 1.5 })).toThrow(/startStop/);
+  });
+
+  it('never loses a life in god mode', () => {
+    const t = tuning();
+    const game = createGame({
+      stage: stageWith([[spawn('grunt'), spawn('civilian', 'Spawn_Left')]]),
+      markers,
+      tuning: t,
+      difficulty: 'normal',
+      seed: 1,
+      god: true,
+    });
+    game.step();
+    const civ = game.state.actors.find((a) => a.civilian)!;
+    const events = game.step([aimAt(game, bodyCenter(civ, t))]);
+    expect(events).toContainEqual({ type: 'CivilianHit', id: 2 });
+    for (let i = 0; i < 600; i++) events.push(...game.step());
+    expect(events.filter((e) => e.type === 'PlayerHit')).toEqual([]);
+    expect(events).toContainEqual({ type: 'RingClosed', id: 1, hit: false });
+    expect(game.state.lives).toBe(5);
   });
 
   it('rejects an invalid stage', () => {

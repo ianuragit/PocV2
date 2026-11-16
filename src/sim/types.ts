@@ -10,7 +10,14 @@ export interface Tuning {
   step_hz: number;
   player: { invulnerable_time: number; ring_pause_on_hit: number; bonus_lives_at: number[] };
   difficulty: Record<Difficulty, { lives: number; max_rings: number; aim_time_scale: number }>;
-  rings: { start_scale: number; end_scale: number; reaim_jitter: number };
+  rings: {
+    start_scale: number;
+    end_scale: number;
+    reaim_jitter: number;
+    /** View only: ring progress at which the colour turns amber, then red. */
+    amber_at: number;
+    red_at: number;
+  };
   revolver: { capacity: number; max_shots_per_second: number; reload_time: number };
   scoring: {
     gun_hand: number;
