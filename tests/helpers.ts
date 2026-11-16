@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
-import { createGame, type Game } from '../src/sim/game';
-import { sub, type Vec3 } from '../src/sim/vec';
-import type { Actor, Difficulty, GameEvent, Input, Markers, Tuning } from '../src/sim/types';
+import { createGame, type Game } from '../src/sim/game.ts';
+import { sub, type Vec3 } from '../src/sim/vec.ts';
+import type { Actor, Difficulty, GameEvent, Input, Markers, Tuning } from '../src/sim/types.ts';
 
 export const readJson = <T>(path: string): T => JSON.parse(readFileSync(path, 'utf8')) as T;
 

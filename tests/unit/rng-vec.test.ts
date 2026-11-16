@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { basis, fromArray, length, normalize, vec } from '../../src/sim/vec';
+import { basis, fromArray, length, normalize, vec } from '../../src/sim/vec.ts';
 
 describe('vec', () => {
   it('normalizes, including the zero vector', () => {

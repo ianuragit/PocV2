@@ -1,115 +1,872 @@
 {
+  "Cover_Barrier": {
+    "position": [
+      9.35,
+      0.55,
+      97.3
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.85,
+      0.55,
+      0.3
+    ]
+  },
+  "Cover_Cart": {
+    "position": [
+      2.5,
+      0.4,
+      151.2114
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.9,
+      0.6,
+      1.25
+    ]
+  },
+  "Cover_CoffeeKiosk": {
+    "position": [
+      2.7111,
+      0.65,
+      21.9992
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      1.2,
+      0.65,
+      1.2
+    ]
+  },
+  "Cover_CrateStack": {
+    "position": [
+      -3.8,
+      0.6,
+      130.5711
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.6,
+      0.6,
+      0.6
+    ]
+  },
+  "Cover_DepotCrates": {
+    "position": [
+      1.75,
+      0.7,
+      177.7113
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      1.25,
+      0.7,
+      0.75
+    ]
+  },
+  "Cover_Newsstand": {
+    "position": [
+      -3.2,
+      1.1,
+      11
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      1.4,
+      1.1,
+      1
+    ]
+  },
+  "Look_Depot": {
+    "position": [
+      -2,
+      1.2,
+      179.9613
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_Entrance": {
+    "position": [
+      0,
+      1.2,
+      14
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_Gates": {
+    "position": [
+      0.3607,
+      1.2,
+      39.9786
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_Hall": {
+    "position": [
+      -0.0889,
+      1.2,
+      25.9992
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_PlatformA": {
+    "position": [
+      5.9113,
+      1.2,
+      62.0453
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_PlatformB": {
+    "position": [
+      6.0487,
+      1.2,
+      78.041
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_PlatformC": {
+    "position": [
+      6.1539,
+      1.2,
+      96.0397
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_TunnelA": {
+    "position": [
+      -1.9971,
+      1.2,
+      133.9711
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_TunnelB": {
+    "position": [
+      -2.0148,
+      1.2,
+      151.9614
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
   "Path_000": {
-    "position": [0, 1.6, 0],
-    "rotation": [0, 0.0, 0]
+    "position": [
+      0,
+      1.6,
+      -8
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
   "Path_001": {
-    "position": [0, 1.6, 10],
-    "rotation": [0, 0.0, 0]
+    "position": [
+      0,
+      1.6,
+      8
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
   "Path_002": {
-    "position": [0, 1.6, 20],
-    "rotation": [0, 0.0, 0]
+    "position": [
+      0,
+      1.6,
+      24
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
   "Path_003": {
-    "position": [5, 1.6, 30],
-    "rotation": [0, 0.0, 0]
+    "position": [
+      1.5,
+      1.6,
+      34
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
   "Path_004": {
-    "position": [5, 1.6, 45],
-    "rotation": [0, 0.0, 0]
+    "position": [
+      5,
+      1.6,
+      42
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Look_A": {
-    "position": [0, 1.2, 11],
-    "rotation": [0, 0.0, 0]
+  "Path_005": {
+    "position": [
+      6,
+      1.6,
+      52
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Look_B": {
-    "position": [0, 1.2, 18],
-    "rotation": [0, 0.0, 0]
+  "Path_006": {
+    "position": [
+      6,
+      1.6,
+      72
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Look_C": {
-    "position": [0, 1.2, 26],
-    "rotation": [0, 0.0, 0]
+  "Path_007": {
+    "position": [
+      6,
+      1.6,
+      92
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Look_D": {
-    "position": [5, 1.2, 35],
-    "rotation": [0, 0.0, 0]
+  "Path_008": {
+    "position": [
+      4.5,
+      1.6,
+      104
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Look_E": {
-    "position": [5, 1.2, 47],
-    "rotation": [0, 0.0, 0]
+  "Path_009": {
+    "position": [
+      0,
+      1.6,
+      112
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Spawn_PillarLeft": {
-    "position": [-2, 0, 10],
-    "rotation": [0, 3.141592653589793, 0]
+  "Path_010": {
+    "position": [
+      -2,
+      1.6,
+      122
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Spawn_PillarRight": {
-    "position": [2, 0, 11],
-    "rotation": [0, 3.141592653589793, 0]
+  "Path_011": {
+    "position": [
+      -2,
+      1.6,
+      142
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Spawn_Gate": {
-    "position": [0, 0, 12],
-    "rotation": [0, 3.141592653589793, 0]
+  "Path_012": {
+    "position": [
+      -2,
+      1.6,
+      162
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Spawn_Kiosk": {
-    "position": [4, 0, 8],
-    "rotation": [0, 3.141592653589793, 0]
+  "Path_013": {
+    "position": [
+      -2,
+      1.6,
+      174
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
-  "Spawn_StairsLeft": {
-    "position": [-3, 0, 17],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_BarrierLeft": {
+    "position": [
+      7.95,
+      0,
+      98.04
+    ],
+    "rotation": [
+      0,
+      -3.0137,
+      0
+    ]
   },
-  "Spawn_StairsRight": {
-    "position": [3, 0, 18],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_CartTop": {
+    "position": [
+      2.49,
+      1,
+      151.21
+    ],
+    "rotation": [
+      0,
+      -2.7611,
+      0
+    ]
   },
-  "Spawn_Turnstile": {
-    "position": [0, 0, 19],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_CrateLean": {
+    "position": [
+      -2.75,
+      0,
+      130.57
+    ],
+    "rotation": [
+      0,
+      3.0546,
+      0
+    ]
   },
-  "Spawn_Bench": {
-    "position": [-1.5, 0, 16],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_DepotBack": {
+    "position": [
+      -5,
+      0,
+      185.96
+    ],
+    "rotation": [
+      0,
+      2.9927,
+      0
+    ]
   },
-  "Spawn_Corridor1": {
-    "position": [-2, 0, 25],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_DepotCentre": {
+    "position": [
+      -2,
+      0,
+      181.96
+    ],
+    "rotation": [
+      0,
+      3.1416,
+      0
+    ]
   },
-  "Spawn_Corridor2": {
-    "position": [2, 0, 26],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_DepotCratesRight": {
+    "position": [
+      3.8,
+      0,
+      177.76
+    ],
+    "rotation": [
+      0,
+      -2.6847,
+      0
+    ]
   },
-  "Spawn_Corridor3": {
-    "position": [0, 0, 27],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_DepotFarRight": {
+    "position": [
+      6.5,
+      0,
+      182.96
+    ],
+    "rotation": [
+      0,
+      -2.6779,
+      0
+    ]
   },
-  "Spawn_PlatformA": {
-    "position": [2, 0, 35],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_DepotLeft": {
+    "position": [
+      -7,
+      0,
+      177.96
+    ],
+    "rotation": [
+      0,
+      2.7468,
+      0
+    ]
   },
-  "Spawn_PlatformB": {
-    "position": [6, 0, 36],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_DepotRight": {
+    "position": [
+      -0.8,
+      0,
+      177.96
+    ],
+    "rotation": [
+      0,
+      -3.0419,
+      0
+    ]
   },
-  "Spawn_Commuter": {
-    "position": [9, 0, 33],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_DoorA": {
+    "position": [
+      -0.75,
+      0,
+      64
+    ],
+    "rotation": [
+      0,
+      2.6962,
+      0
+    ]
   },
-  "Spawn_TrainDoorL": {
-    "position": [3, 0, 46],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_DoorB1": {
+    "position": [
+      -0.75,
+      0,
+      81
+    ],
+    "rotation": [
+      0,
+      2.715,
+      0
+    ]
   },
-  "Spawn_TrainDoorR": {
-    "position": [7, 0, 46],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_DoorB2": {
+    "position": [
+      -0.75,
+      0,
+      88
+    ],
+    "rotation": [
+      0,
+      2.8413,
+      0
+    ]
   },
-  "Spawn_TrainCab": {
-    "position": [5, 0, 48],
-    "rotation": [0, 3.141592653589793, 0]
+  "Spawn_Doorway": {
+    "position": [
+      3,
+      0,
+      16
+    ],
+    "rotation": [
+      0,
+      -2.9305,
+      0
+    ]
   },
-  "Cover_Column": {
-    "position": [-6, 1, 14],
-    "rotation": [0, 0, 0],
-    "scale": [0.5, 1, 0.5]
+  "Spawn_GateA": {
+    "position": [
+      -3.14,
+      0,
+      35.98
+    ],
+    "rotation": [
+      0,
+      2.7292,
+      0
+    ]
+  },
+  "Spawn_GateB": {
+    "position": [
+      0.86,
+      0,
+      37.98
+    ],
+    "rotation": [
+      0,
+      -3.0916,
+      0
+    ]
+  },
+  "Spawn_GateC": {
+    "position": [
+      4.86,
+      0,
+      36.98
+    ],
+    "rotation": [
+      0,
+      -2.6779,
+      0
+    ]
+  },
+  "Spawn_GateCivilian": {
+    "position": [
+      -5.64,
+      0,
+      33.98
+    ],
+    "rotation": [
+      0,
+      2.3562,
+      0
+    ]
+  },
+  "Spawn_HallBack": {
+    "position": [
+      -1.59,
+      0,
+      29
+    ],
+    "rotation": [
+      0,
+      3.0419,
+      0
+    ]
+  },
+  "Spawn_HallCivilian": {
+    "position": [
+      -6.09,
+      0,
+      21
+    ],
+    "rotation": [
+      0,
+      2.433,
+      0
+    ]
+  },
+  "Spawn_HallLeft": {
+    "position": [
+      -4.59,
+      0,
+      24
+    ],
+    "rotation": [
+      0,
+      2.7187,
+      0
+    ]
+  },
+  "Spawn_KioskLeft": {
+    "position": [
+      0.51,
+      0,
+      22.5
+    ],
+    "rotation": [
+      0,
+      -3.0711,
+      0
+    ]
+  },
+  "Spawn_KioskRight": {
+    "position": [
+      5.71,
+      0,
+      23
+    ],
+    "rotation": [
+      0,
+      -2.5691,
+      0
+    ]
+  },
+  "Spawn_MachinesRight": {
+    "position": [
+      7.41,
+      0,
+      25
+    ],
+    "rotation": [
+      0,
+      -2.5432,
+      0
+    ]
+  },
+  "Spawn_NewsstandLeft": {
+    "position": [
+      -1,
+      0,
+      11
+    ],
+    "rotation": [
+      0,
+      3.0309,
+      0
+    ]
+  },
+  "Spawn_NewsstandRight": {
+    "position": [
+      -6.2,
+      0,
+      11.5
+    ],
+    "rotation": [
+      0,
+      2.5634,
+      0
+    ]
+  },
+  "Spawn_PlatA1": {
+    "position": [
+      7.91,
+      0,
+      59.05
+    ],
+    "rotation": [
+      0,
+      -2.9229,
+      0
+    ]
+  },
+  "Spawn_PlatA2": {
+    "position": [
+      4.41,
+      0,
+      62.05
+    ],
+    "rotation": [
+      0,
+      3.0172,
+      0
+    ]
+  },
+  "Spawn_PlatACivilian": {
+    "position": [
+      9.91,
+      0,
+      57.05
+    ],
+    "rotation": [
+      0,
+      -2.6224,
+      0
+    ]
+  },
+  "Spawn_PlatB1": {
+    "position": [
+      9.55,
+      0,
+      76.04
+    ],
+    "rotation": [
+      0,
+      -2.8049,
+      0
+    ]
+  },
+  "Spawn_PlatB2": {
+    "position": [
+      6.05,
+      0,
+      79.04
+    ],
+    "rotation": [
+      0,
+      3.1416,
+      0
+    ]
+  },
+  "Spawn_PlatB3": {
+    "position": [
+      7.55,
+      0,
+      82.04
+    ],
+    "rotation": [
+      0,
+      -3.0481,
+      0
+    ]
+  },
+  "Spawn_PlatC1": {
+    "position": [
+      5.65,
+      0,
+      93.04
+    ],
+    "rotation": [
+      0,
+      3.0861,
+      0
+    ]
+  },
+  "Spawn_PlatC2": {
+    "position": [
+      11.45,
+      0,
+      100.04
+    ],
+    "rotation": [
+      0,
+      -2.8217,
+      0
+    ]
+  },
+  "Spawn_PlatCCivilian": {
+    "position": [
+      3.65,
+      0,
+      90.54
+    ],
+    "rotation": [
+      0,
+      2.7744,
+      0
+    ]
+  },
+  "Spawn_StreetCivilian": {
+    "position": [
+      4.2,
+      0,
+      8
+    ],
+    "rotation": [
+      0,
+      -2.5309,
+      0
+    ]
+  },
+  "Spawn_TunA1": {
+    "position": [
+      -1.6,
+      0,
+      131.97
+    ],
+    "rotation": [
+      0,
+      -3.1016,
+      0
+    ]
+  },
+  "Spawn_TunA2": {
+    "position": [
+      -3.5,
+      0,
+      137.97
+    ],
+    "rotation": [
+      0,
+      3.0481,
+      0
+    ]
+  },
+  "Spawn_TunB1": {
+    "position": [
+      -3.01,
+      0,
+      148.96
+    ],
+    "rotation": [
+      0,
+      3.0309,
+      0
+    ]
+  },
+  "Spawn_TunB2": {
+    "position": [
+      -3.81,
+      0,
+      154.96
+    ],
+    "rotation": [
+      0,
+      3.0222,
+      0
+    ]
+  },
+  "Spawn_TunB3": {
+    "position": [
+      -0.61,
+      0,
+      155.96
+    ],
+    "rotation": [
+      0,
+      -3.0543,
+      0
+    ]
+  },
+  "Spawn_TunnelCivilian": {
+    "position": [
+      -3.81,
+      0,
+      145.96
+    ],
+    "rotation": [
+      0,
+      2.8501,
+      0
+    ]
   }
 }

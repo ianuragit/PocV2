@@ -1,6 +1,6 @@
 import { Vector3, type PerspectiveCamera } from 'three';
-import type { Actor, Ring, Tuning } from '../sim';
-import { SIGHT_COLORS } from './style';
+import type { Actor, Ring, Tuning } from '../sim/index.ts';
+import { SIGHT_COLORS } from './style.ts';
 
 export interface ScreenPoint {
   x: number;

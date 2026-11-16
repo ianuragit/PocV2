@@ -1,6 +1,6 @@
-import type { Game } from '../../src/sim/game';
-import type { GameEvent, Input, Tuning } from '../../src/sim/types';
-import { aimAt, bodyCenter } from '../helpers';
+import type { Game } from '../../src/sim/game.ts';
+import type { GameEvent, Input, Tuning } from '../../src/sim/types.ts';
+import { aimAt, bodyCenter } from '../helpers.ts';
 
 export interface BotResult {
   steps: number;

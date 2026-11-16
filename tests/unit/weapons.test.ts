@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createWeapon, startReload, tickWeapon, tryFire, weaponSpec } from '../../src/sim/weapons';
-import { tuning } from '../helpers';
+import { createWeapon, startReload, tickWeapon, tryFire, weaponSpec } from '../../src/sim/weapons.ts';
+import { tuning } from '../helpers.ts';
 
 const spec = weaponSpec(tuning().revolver, 60);
 

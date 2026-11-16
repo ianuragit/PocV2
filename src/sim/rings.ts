@@ -1,5 +1,5 @@
-import type { Rng } from './rng';
-import type { Actor, GameEvent, Ring, Tuning } from './types';
+import type { Rng } from './rng.ts';
+import type { Actor, GameEvent, Ring, Tuning } from './types.ts';
 
 /**
  * Ring scheduling. At most `maxRings` enemies count down at once; the rest wait in a queue

@@ -1,13 +1,20 @@
 import { Vector3 } from 'three';
-import { createGame, type Difficulty, type Game, type GameEvent, type Tuning, type Vec3 } from './sim';
-import { Hud } from './ui/hud';
-import { Screens } from './ui/screens';
-import { ActorsView } from './view/actorView';
-import type { GameData } from './view/data';
-import { InputCapture } from './view/input';
-import { Overlay } from './view/overlay';
-import { Renderer } from './view/renderer';
-import { buildStageView } from './view/stageView';
+import {
+  createGame,
+  type Difficulty,
+  type Game,
+  type GameEvent,
+  type Tuning,
+  type Vec3,
+} from './sim/index.ts';
+import { Hud } from './ui/hud.ts';
+import { Screens } from './ui/screens.ts';
+import { ActorsView } from './view/actorView.ts';
+import type { GameData } from './view/data.ts';
+import { InputCapture } from './view/input.ts';
+import { Overlay } from './view/overlay.ts';
+import { Renderer } from './view/renderer.ts';
+import { buildStageView } from './view/stageView.ts';
 
 export interface AppOptions {
   data: GameData;
@@ -19,7 +26,7 @@ export interface AppOptions {
 }
 
 const MAX_STEPS_PER_FRAME = 5;
-const RESULTS_DELAY = 1.2; // seconds between the last event and the results screen
+const RESULTS_DELAY = 1.2; // seconds of simulation time between the end of play and the results screen
 const EVENT_LOG_SIZE = 500;
 
 /** Wires the simulation to the view: fixed-step loop, screens, input, pause on blur. */
@@ -78,7 +85,7 @@ export class App {
     });
     if (!this.stageBuilt) {
       const spawns = this.game.stage.stops.flatMap((stop) => stop.waves.flat().map((sp) => sp.position));
-      this.renderer.scene.add(buildStageView(this.game.stage, spawns));
+      this.renderer.scene.add(buildStageView(this.game.stage, spawns, this.opts.data.environment));
       this.stageBuilt = true;
     }
     this.prevCamera = this.game.state.camera.position;
@@ -114,7 +121,23 @@ export class App {
       this.hud.onEvents(events, this.input.pointer);
       this.onEvents(events);
     }
+    // The results delay counts simulation steps (which keep running after the game ends), so it
+    // lasts the same in every browser and tests can advance it exactly with stepFrames.
+    if (this.endTimer > 0) {
+      this.endTimer -= this.stepSeconds;
+      if (this.endTimer <= 0) this.showResults();
+    }
     return events;
+  }
+
+  private showResults(): void {
+    const s = this.game.state;
+    this.hud.show(false);
+    this.screens.show('results', {
+      score: s.score.score,
+      cleared: s.phase === 'stageClear',
+      accuracy: s.score.shots === 0 ? 0 : Math.round((s.score.hits / s.score.shots) * 100),
+    });
   }
 
   private onEvents(events: readonly GameEvent[]): void {
@@ -180,19 +203,6 @@ export class App {
     } else if (this.screens.current === 'paused') {
       // Inputs queued on the pause screen (resume) still need a step to take effect.
       this.step();
-    }
-
-    if (this.endTimer > 0) {
-      this.endTimer -= dt;
-      if (this.endTimer <= 0) {
-        const s = this.game.state;
-        this.hud.show(false);
-        this.screens.show('results', {
-          score: s.score.score,
-          cleared: s.phase === 'stageClear',
-          accuracy: s.score.shots === 0 ? 0 : Math.round((s.score.hits / s.score.shots) * 100),
-        });
-      }
     }
 
     this.draw(dt, this.accumulator / this.stepSeconds);

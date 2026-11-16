@@ -1,42 +1,41 @@
 {
   "id": "stage1",
-  "name": "Metro Station (greybox)",
+  "name": "Metro Station",
   "environment": "stages/stage1.glb",
   "music": "audio/music/stage1.ogg",
   "rank_thresholds": {
-    "S": 12000,
-    "A": 9000,
-    "B": 6000
+    "S": 40000,
+    "A": 30000,
+    "B": 18000
   },
   "scenes": [
     {
       "id": "concourse",
       "stops": [
         {
-          "path_offset": 2,
+          "path_offset": 10,
           "travel_speed": 4,
-          "look_at": "Look_A",
+          "look_at": "Look_Entrance",
           "waves": [
             {
               "spawns": [
                 {
                   "type": "grunt",
-                  "marker": "Spawn_PillarLeft",
+                  "marker": "Spawn_NewsstandLeft",
                   "entry": "lean_out",
                   "delay": 0
                 },
                 {
-                  "type": "grunt",
-                  "marker": "Spawn_PillarRight",
+                  "type": "runner",
+                  "marker": "Spawn_Doorway",
                   "entry": "run_in",
-                  "delay": 0.6,
-                  "aim_time": 1.8
+                  "delay": 0.6
                 },
                 {
                   "type": "civilian",
-                  "marker": "Spawn_Kiosk",
-                  "entry": "stand_up",
-                  "delay": 1.0
+                  "marker": "Spawn_StreetCivilian",
+                  "entry": "run_in",
+                  "delay": 0.3
                 }
               ]
             },
@@ -44,8 +43,8 @@
               "spawns": [
                 {
                   "type": "grunt",
-                  "marker": "Spawn_Gate",
-                  "entry": "appear",
+                  "marker": "Spawn_NewsstandRight",
+                  "entry": "lean_out",
                   "delay": 0
                 }
               ]
@@ -53,37 +52,49 @@
           ]
         },
         {
-          "path_offset": 10,
+          "path_offset": 22,
           "travel_speed": 4,
-          "look_at": "Look_B",
+          "look_at": "Look_Hall",
           "waves": [
             {
               "spawns": [
                 {
                   "type": "grunt",
-                  "marker": "Spawn_StairsLeft",
+                  "marker": "Spawn_KioskLeft",
                   "entry": "lean_out",
                   "delay": 0
                 },
                 {
                   "type": "grunt",
-                  "marker": "Spawn_StairsRight",
-                  "entry": "lean_out",
+                  "marker": "Spawn_HallLeft",
+                  "entry": "run_in",
                   "delay": 0.4
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_HallCivilian",
+                  "entry": "stand_up",
+                  "delay": 0.2
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_MachinesRight",
+                  "entry": "run_in",
+                  "delay": 0.9
                 }
               ]
             },
             {
               "spawns": [
                 {
-                  "type": "heavy",
-                  "marker": "Spawn_Turnstile",
-                  "entry": "run_in",
+                  "type": "grunt",
+                  "marker": "Spawn_KioskRight",
+                  "entry": "lean_out",
                   "delay": 0
                 },
                 {
-                  "type": "runner",
-                  "marker": "Spawn_Bench",
+                  "type": "heavy",
+                  "marker": "Spawn_HallBack",
                   "entry": "run_in",
                   "delay": 0.5
                 }
@@ -92,29 +103,35 @@
           ]
         },
         {
-          "path_offset": 18,
-          "travel_speed": 5,
-          "look_at": "Look_C",
+          "path_offset": 36,
+          "travel_speed": 4,
+          "look_at": "Look_Gates",
           "waves": [
             {
               "spawns": [
                 {
-                  "type": "runner",
-                  "marker": "Spawn_Corridor1",
-                  "entry": "run_in",
+                  "type": "grunt",
+                  "marker": "Spawn_GateA",
+                  "entry": "stand_up",
                   "delay": 0
                 },
                 {
-                  "type": "grunt",
-                  "marker": "Spawn_Corridor2",
-                  "entry": "lean_out",
+                  "type": "runner",
+                  "marker": "Spawn_GateB",
+                  "entry": "run_in",
                   "delay": 0.3
                 },
                 {
                   "type": "grunt",
-                  "marker": "Spawn_Corridor3",
+                  "marker": "Spawn_GateC",
                   "entry": "stand_up",
                   "delay": 0.6
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_GateCivilian",
+                  "entry": "run_in",
+                  "delay": 0.2
                 }
               ]
             }
@@ -126,58 +143,253 @@
       "id": "platform",
       "stops": [
         {
-          "path_offset": 28,
+          "path_offset": 59,
           "travel_speed": 5,
-          "look_at": "Look_D",
+          "look_at": "Look_PlatformA",
           "waves": [
             {
               "spawns": [
                 {
                   "type": "grunt",
-                  "marker": "Spawn_PlatformA",
-                  "entry": "lean_out",
+                  "marker": "Spawn_PlatA1",
+                  "entry": "run_in",
                   "delay": 0
                 },
                 {
                   "type": "grunt",
-                  "marker": "Spawn_PlatformB",
-                  "entry": "run_in",
+                  "marker": "Spawn_DoorA",
+                  "entry": "appear",
                   "delay": 0.5
                 },
                 {
                   "type": "civilian",
-                  "marker": "Spawn_Commuter",
+                  "marker": "Spawn_PlatACivilian",
+                  "entry": "stand_up",
+                  "delay": 0.1
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "heavy",
+                  "marker": "Spawn_PlatA2",
                   "entry": "run_in",
-                  "delay": 0.2
+                  "delay": 0
                 }
               ]
             }
           ]
         },
         {
-          "path_offset": 40,
+          "path_offset": 75,
           "travel_speed": 5,
-          "look_at": "Look_E",
+          "look_at": "Look_PlatformB",
           "waves": [
             {
               "spawns": [
                 {
                   "type": "grunt",
-                  "marker": "Spawn_TrainDoorL",
+                  "marker": "Spawn_DoorB1",
+                  "entry": "appear",
+                  "delay": 0
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_PlatB1",
+                  "entry": "run_in",
+                  "delay": 0.3
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_DoorB2",
+                  "entry": "appear",
+                  "delay": 0.7
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_PlatB2",
+                  "entry": "run_in",
+                  "delay": 0
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_PlatB3",
+                  "entry": "run_in",
+                  "delay": 0.4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 93,
+          "travel_speed": 5,
+          "look_at": "Look_PlatformC",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_PlatC1",
+                  "entry": "stand_up",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BarrierLeft",
+                  "entry": "lean_out",
+                  "delay": 0.4
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_PlatCCivilian",
+                  "entry": "run_in",
+                  "delay": 0.2
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_PlatC2",
+                  "entry": "run_in",
+                  "delay": 0.8
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tunnel",
+      "stops": [
+        {
+          "path_offset": 132.5,
+          "travel_speed": 4.5,
+          "look_at": "Look_TunnelA",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_CrateLean",
                   "entry": "lean_out",
                   "delay": 0
                 },
                 {
                   "type": "grunt",
-                  "marker": "Spawn_TrainDoorR",
-                  "entry": "lean_out",
-                  "delay": 0.2
-                },
+                  "marker": "Spawn_TunA1",
+                  "entry": "run_in",
+                  "delay": 0.5
+                }
+              ]
+            },
+            {
+              "spawns": [
                 {
                   "type": "heavy",
-                  "marker": "Spawn_TrainCab",
+                  "marker": "Spawn_TunA2",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 150.5,
+          "travel_speed": 4.5,
+          "look_at": "Look_TunnelB",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_TunB1",
+                  "entry": "run_in",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_CartTop",
                   "entry": "stand_up",
-                  "delay": 0.8
+                  "delay": 0.4
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_TunnelCivilian",
+                  "entry": "run_in",
+                  "delay": 0.2
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "runner",
+                  "marker": "Spawn_TunB2",
+                  "entry": "run_in",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_TunB3",
+                  "entry": "run_in",
+                  "delay": 0.5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 176.5,
+          "travel_speed": 4.5,
+          "look_at": "Look_Depot",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_DepotRight",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_DepotCratesRight",
+                  "entry": "lean_out",
+                  "delay": 0.3
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_DepotLeft",
+                  "entry": "run_in",
+                  "delay": 0.6
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "heavy",
+                  "marker": "Spawn_DepotCentre",
+                  "entry": "run_in",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_DepotBack",
+                  "entry": "run_in",
+                  "delay": 0.5
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_DepotFarRight",
+                  "entry": "run_in",
+                  "delay": 0.9
                 }
               ]
             }

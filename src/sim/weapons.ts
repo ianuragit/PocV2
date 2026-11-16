@@ -1,4 +1,4 @@
-import type { WeaponState } from './types';
+import type { WeaponState } from './types.ts';
 
 export interface WeaponSpec {
   capacity: number;

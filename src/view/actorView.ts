@@ -1,6 +1,6 @@
 import { CapsuleGeometry, Group, Mesh, MeshBasicMaterial, SphereGeometry, type Material } from 'three';
-import type { Actor, Tuning } from '../sim';
-import { buildCharacter, type Character } from './characters';
+import type { Actor, Tuning } from '../sim/index.ts';
+import { buildCharacter, type Character } from './characters.ts';
 
 const RESOLVED = new Set(['dead', 'disarmed', 'fled']);
 const FADE_SECONDS = 0.5;

@@ -1,6 +1,6 @@
 import { Raycaster, Vector2, type PerspectiveCamera } from 'three';
-import type { Input } from '../sim';
-import type { ScreenPoint } from './overlay';
+import type { Input } from '../sim/index.ts';
+import type { ScreenPoint } from './overlay.ts';
 
 /** Fraction of the canvas width or height, from any edge, where a click reloads instead of firing. */
 export const BORDER_ZONE = 0.04;

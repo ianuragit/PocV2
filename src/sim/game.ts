@@ -1,11 +1,11 @@
-import { createRng } from './rng';
-import { advanceRings, promoteWaiting, ringsOf } from './rings';
-import { bonusLivesCrossed, breakCombo, createScore, registerHit } from './score';
-import { resolveShot } from './shots';
-import { resolveStage, type ResolvedSpawn, type ResolvedStage } from './stage';
-import { normalize } from './vec';
-import { createWeapon, startReload, tickWeapon, tryFire, weaponSpec } from './weapons';
-import type { Actor, Difficulty, GameEvent, GameState, Input, Markers, Tuning } from './types';
+import { createRng } from './rng.ts';
+import { advanceRings, promoteWaiting, ringsOf } from './rings.ts';
+import { bonusLivesCrossed, breakCombo, createScore, registerHit } from './score.ts';
+import { resolveShot } from './shots.ts';
+import { resolveStage, type ResolvedSpawn, type ResolvedStage } from './stage.ts';
+import { normalize } from './vec.ts';
+import { createWeapon, startReload, tickWeapon, tryFire, weaponSpec } from './weapons.ts';
+import type { Actor, Difficulty, GameEvent, GameState, Input, Markers, Tuning } from './types.ts';
 
 export interface GameOptions {
   /** Parsed stage JSON. Validated against the markers and tuning; invalid data throws. */

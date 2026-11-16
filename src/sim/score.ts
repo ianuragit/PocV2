@@ -1,4 +1,4 @@
-import type { HitZone, ScoreState, Tuning } from './types';
+import type { HitZone, ScoreState, Tuning } from './types.ts';
 
 type Scoring = Tuning['scoring'];
 
