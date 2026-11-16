@@ -12,6 +12,7 @@ import { SaveStore } from './save/saveStore.ts';
 import { Hud } from './ui/hud.ts';
 import { DEFAULT_ACTION, Screens } from './ui/screens.ts';
 import { ActorsView } from './view/actorView.ts';
+import { AudioDirector } from './view/audio.ts';
 import type { GameData } from './view/data.ts';
 import { InputCapture } from './view/input.ts';
 import { Overlay } from './view/overlay.ts';
@@ -53,6 +54,7 @@ export class App {
   readonly actors: ActorsView;
   readonly tuning: Tuning;
   readonly save: SaveStore;
+  readonly audio: AudioDirector;
   game!: Game;
   difficulty: Difficulty;
   /** Recent events, newest last. Read by tests and the debug overlay. */
@@ -67,6 +69,8 @@ export class App {
   private prevCamera: Vec3 = { x: 0, y: 0, z: 0 };
   private endTimer = -1;
   private stageBuilt = false;
+  private lastCountdown = -1;
+  private saidGo = false;
 
   constructor(private readonly opts: AppOptions) {
     this.tuning = opts.data.tuning;
@@ -82,6 +86,12 @@ export class App {
     this.stepSeconds = 1 / this.tuning.step_hz;
     this.input = new InputCapture(stageEl, this.renderer.camera, { onAction: (a) => this.onAction(a) });
     this.hud.setReducedFlash(this.save.data.options.reducedFlash);
+    this.audio = new AudioDirector(this.tuning);
+    this.audio.setVolumes(this.save.data.options.musicVolume, this.save.data.options.sfxVolume);
+    // Browsers allow sound only after a user gesture: unlock on the first click or key press.
+    const unlock = () => this.audio.unlock();
+    window.addEventListener('pointerdown', unlock, true);
+    window.addEventListener('keydown', unlock, true);
 
     this.screens.root.addEventListener('click', (e) => this.onScreenClick(e));
     this.screens.root.addEventListener('submit', (e) => {
@@ -129,6 +139,8 @@ export class App {
   start(): void {
     this.screens.show('playing');
     this.hud.show(true);
+    this.hud.banner('READY', 1.2);
+    this.saidGo = false;
     if (!this.opts.debug) document.documentElement.requestFullscreen?.().catch(() => undefined);
   }
 
@@ -147,8 +159,11 @@ export class App {
     if (spec?.auto && this.input.held && this.input.pointer && this.screens.current === 'playing') {
       this.input.fireAt(this.input.pointer);
     }
+    const weaponBefore = this.game.state.weapon.kind;
     const events = this.game.step(this.input.drain());
     if (events.length > 0) {
+      this.audio.onEvents(events, weaponBefore);
+      this.actors.onEvents(events);
       this.eventLog.push(...events);
       if (this.eventLog.length > EVENT_LOG_SIZE)
         this.eventLog.splice(0, this.eventLog.length - EVENT_LOG_SIZE);
@@ -156,8 +171,12 @@ export class App {
       this.onEvents(events);
     }
     if (this.screens.current === 'continue') {
-      this.screens.setCountdown(Math.ceil(this.game.state.continueTimer / this.tuning.step_hz));
+      const seconds = Math.ceil(this.game.state.continueTimer / this.tuning.step_hz);
+      this.screens.setCountdown(seconds);
+      if (seconds !== this.lastCountdown) this.audio.play('tick');
+      this.lastCountdown = seconds;
     }
+    this.hud.tick(this.stepSeconds);
     // The results delay counts simulation steps (which keep running after the game ends), so it
     // lasts the same in every browser and tests can advance it exactly with stepFrames.
     if (this.endTimer > 0) {
@@ -185,6 +204,13 @@ export class App {
           break;
         case 'EnemySpawned':
           if (e.actor === 'boss') this.hud.banner('WARNING: BOSS', 1.6);
+          break;
+        case 'StopReached':
+          if (!this.saidGo) this.hud.banner('GO!', 0.7);
+          this.saidGo = true;
+          break;
+        case 'PlayerHit':
+          this.renderer.shake(this.save.data.options.reducedFlash ? 0.015 : 0.06);
           break;
         case 'WeaponPickedUp':
           this.hud.banner(WEAPON_NAMES[e.weapon] ?? '', 1);
@@ -252,11 +278,23 @@ export class App {
   }
 
   private showOptions(status = ''): void {
+    const o = this.save.data.options;
     this.screens.show('options', {
       difficulty: this.difficulty,
-      reducedFlash: this.save.data.options.reducedFlash,
+      reducedFlash: o.reducedFlash,
+      musicVolume: o.musicVolume,
+      sfxVolume: o.sfxVolume,
       status,
     });
+  }
+
+  /** Steps a volume through 0, 20, ... 100%, wrapping to 0. */
+  private cycleVolume(key: 'musicVolume' | 'sfxVolume'): void {
+    const o = this.save.data.options;
+    const next = Math.round(o[key] * 5) >= 5 ? 0 : (Math.round(o[key] * 5) + 1) / 5;
+    this.save.setOptions({ [key]: next });
+    this.audio.setVolumes(this.save.data.options.musicVolume, this.save.data.options.sfxVolume);
+    this.showOptions();
   }
 
   private setDifficulty(d: Difficulty): void {
@@ -269,8 +307,9 @@ export class App {
     const target = e.target as HTMLElement;
     const button = target.closest<HTMLElement>('[data-action]');
     if (button) {
+      this.audio.play('menu');
       this.onMenu(button.dataset.action!);
-    } else if (!target.closest('form, input, label, table') && this.screens.backgroundClicks) {
+    } else if (!target.closest('form, input, label, table, a') && this.screens.backgroundClicks) {
       const action = DEFAULT_ACTION[this.screens.current];
       if (action) this.onMenu(action);
     }
@@ -327,6 +366,9 @@ export class App {
       case 'options':
         this.showOptions();
         break;
+      case 'credits':
+        this.screens.show('credits');
+        break;
       case 'set-easy':
       case 'set-normal':
       case 'set-hard':
@@ -337,6 +379,13 @@ export class App {
         this.save.setOptions({ reducedFlash: !this.save.data.options.reducedFlash });
         this.hud.setReducedFlash(this.save.data.options.reducedFlash);
         this.showOptions();
+        break;
+      case 'music':
+        this.cycleVolume('musicVolume');
+        break;
+      case 'sfx':
+        this.cycleVolume('sfxVolume');
+        this.audio.play('hit');
         break;
       case 'export':
         this.exportSave();
@@ -376,6 +425,7 @@ export class App {
       if (ok) {
         this.difficulty = this.save.data.options.difficulty;
         this.hud.setReducedFlash(this.save.data.options.reducedFlash);
+        this.audio.setVolumes(this.save.data.options.musicVolume, this.save.data.options.sfxVolume);
         this.newGame();
       }
       this.showOptions(ok ? 'SAVE IMPORTED' : 'THAT FILE IS NOT A REAL COP 2 SAVE');
@@ -449,6 +499,19 @@ export class App {
       borderZone: pointer !== null && this.input.inBorderZone(pointer),
       debug: this.opts.debug,
     });
-    this.hud.update(s, dt);
+    this.hud.update(s);
+
+    // Music follows the screen: title theme on menus, the stage or boss theme in play (quieter while
+    // paused or offered a continue), silence under the results jingle.
+    if (playing || screen === 'paused' || screen === 'continue') {
+      this.audio.playMusic(this.audio.themeFor(s));
+      this.audio.duck(!playing);
+      if (playing) this.audio.update(s);
+    } else if (screen === 'results') {
+      this.audio.playMusic(null);
+    } else {
+      this.audio.playMusic('title');
+      this.audio.duck(false);
+    }
   }
 }

@@ -16,6 +16,9 @@ export interface Options {
   difficulty: Difficulty;
   /** Softer, shorter screen flashes when hit. */
   reducedFlash: boolean;
+  /** 0 to 1. */
+  musicVolume: number;
+  sfxVolume: number;
 }
 
 export interface SaveData {
@@ -35,7 +38,7 @@ export interface KeyValueStorage {
 
 export const defaults = (): SaveData => ({
   version: SAVE_VERSION,
-  options: { difficulty: 'normal', reducedFlash: false },
+  options: { difficulty: 'normal', reducedFlash: false, musicVolume: 0.6, sfxVolume: 0.8 },
   cleared: [],
   scores: {},
 });
@@ -69,6 +72,10 @@ export function parseSave(text: string): SaveData | null {
     if (typeof o.difficulty === 'string' && DIFFICULTIES.has(o.difficulty))
       out.options.difficulty = o.difficulty as Difficulty;
     if (typeof o.reducedFlash === 'boolean') out.options.reducedFlash = o.reducedFlash;
+    for (const k of ['musicVolume', 'sfxVolume'] as const) {
+      const v = o[k];
+      if (typeof v === 'number' && Number.isFinite(v)) out.options[k] = Math.min(1, Math.max(0, v));
+    }
   }
   if (Array.isArray(r.cleared))
     out.cleared = r.cleared.filter((s): s is string => typeof s === 'string').slice(0, 50);

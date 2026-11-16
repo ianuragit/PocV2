@@ -510,3 +510,38 @@ body {
     0.25cqh 0.25cqh 0 var(--ink),
     0 0 0.8cqh var(--ink);
 }
+
+/* ---------- M5: loading bar, credits ---------- */
+
+.loadbar {
+  width: 40cqh;
+  height: 2.2cqh;
+  border: 0.35cqh solid var(--fg);
+  background: rgba(11, 13, 18, 0.7);
+  transform: skewX(-10deg);
+}
+
+#load-bar {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.15s;
+}
+
+.credits {
+  max-width: 120cqh;
+  text-align: center;
+  font-size: 2.5cqh;
+  line-height: 1.5;
+  text-shadow:
+    0.25cqh 0.25cqh 0 var(--ink),
+    0 0 0.8cqh var(--ink);
+}
+
+.credits p {
+  margin: 0 0 1.4cqh;
+}
+
+.credits a {
+  color: var(--cool);
+}

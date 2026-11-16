@@ -23,6 +23,9 @@ export class Renderer {
   readonly camera = new PerspectiveCamera(60, 16 / 9, 0.1, 400);
   private readonly look = new Vector3();
   private lookInitialised = false;
+  /** Camera shake amplitude in metres; decays every frame. */
+  private shakeAmount = 0;
+  private shakeTime = 0;
 
   constructor(readonly canvas: HTMLCanvasElement) {
     this.gl = new WebGLRenderer({ canvas, antialias: false });
@@ -56,7 +59,22 @@ export class Renderer {
       this.look.lerp(target, 1 - Math.exp(-LOOK_SMOOTHING * dt));
     }
     this.camera.lookAt(this.look);
+    if (this.shakeAmount > 0.0005 && dt > 0) {
+      this.shakeTime += dt;
+      const a = this.shakeAmount;
+      this.camera.position.x += Math.sin(this.shakeTime * 61) * a;
+      this.camera.position.y += Math.cos(this.shakeTime * 53) * a;
+      this.camera.rotateZ(Math.sin(this.shakeTime * 47) * a * 0.4);
+      this.shakeAmount *= Math.exp(-dt * 9);
+    } else {
+      this.shakeAmount = 0;
+    }
     this.camera.updateMatrixWorld();
+  }
+
+  /** Jolts the camera (when the player is hit). Larger values stack up to a cap. */
+  shake(amount: number): void {
+    this.shakeAmount = Math.min(0.12, this.shakeAmount + amount);
   }
 
   /** Snap the look direction on the next placement (new game, debug jumps). */

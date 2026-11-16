@@ -22,7 +22,12 @@ describe('SaveStore', () => {
   it('starts from defaults and survives a reload through storage', () => {
     const storage = memory();
     const a = new SaveStore(storage);
-    expect(a.data.options).toEqual({ difficulty: 'normal', reducedFlash: false });
+    expect(a.data.options).toEqual({
+      difficulty: 'normal',
+      reducedFlash: false,
+      musicVolume: 0.6,
+      sfxVolume: 0.8,
+    });
     a.setOptions({ difficulty: 'hard' });
     a.addScore('stage1', 'hard', entry('ann', 1200));
     a.markCleared('stage1');
@@ -64,7 +69,7 @@ describe('SaveStore', () => {
     const parsed = parseSave(
       JSON.stringify({
         version: 1,
-        options: { difficulty: 'nightmare', reducedFlash: 'yes' },
+        options: { difficulty: 'nightmare', reducedFlash: 'yes', musicVolume: 7, sfxVolume: 'loud' },
         cleared: ['stage1', 7],
         scores: {
           'stage1:normal': [
@@ -77,7 +82,12 @@ describe('SaveStore', () => {
         },
       }),
     )!;
-    expect(parsed.options).toEqual({ difficulty: 'normal', reducedFlash: false });
+    expect(parsed.options).toEqual({
+      difficulty: 'normal',
+      reducedFlash: false,
+      musicVolume: 1,
+      sfxVolume: 0.8,
+    });
     expect(parsed.cleared).toEqual(['stage1']);
     expect(Object.keys(parsed.scores)).toEqual(['stage1:normal']);
     expect(parsed.scores['stage1:normal']).toEqual([{ ...entry('B..', 10) }]);

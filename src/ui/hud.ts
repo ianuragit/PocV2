@@ -34,7 +34,7 @@ export class Hud {
     this.flash.classList.toggle('reduced', on);
   }
 
-  update(state: GameState, dt: number): void {
+  update(state: GameState): void {
     const s = state.score;
     if (s.score !== this.last.score) this.score.textContent = String(s.score).padStart(7, '0');
     if (s.multiplier !== this.last.mult)
@@ -70,9 +70,12 @@ export class Hud {
       kind: w.kind,
       reloadShown,
     };
+  }
 
+  /** Counts banners down in simulation time, so they last the same everywhere (and in tests). */
+  tick(seconds: number): void {
     if (this.bannerTimer > 0) {
-      this.bannerTimer -= dt;
+      this.bannerTimer -= seconds;
       if (this.bannerTimer <= 0) this.bannerEl.classList.remove('show');
     }
   }

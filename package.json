@@ -16,7 +16,7 @@
     "validate": "node tools/validate.ts",
     "markers": "node tools/extract-markers.ts",
     "greybox": "node tools/greybox/stage1.ts && node tools/extract-markers.ts",
-    "budget": "node tools/check-size-budget.mjs"
+    "budget": "node tools/check-size-budget.ts"
   },
   "dependencies": {
     "three": "0.187.0"

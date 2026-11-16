@@ -59,6 +59,9 @@ const C = {
   depotWall: 0x5b4a8f,
 };
 
+/** Light fittings go in their own mesh, which the game draws unlit so they glow. */
+const lights = new MeshBuilder();
+
 // ---------- The rail ----------
 
 const PATH: Vec3[] = [
@@ -356,8 +359,8 @@ tun.box(-5.2, 0, TZ0, -4.6, 4.2, TZ1, C.concrete);
 tun.box(4.6, -1.2, TZ0, 5.2, 4.2, TZ1, C.concrete);
 tun.ceiling(-5.2, TZ0, 5.2, TZ1, 4.2, C.concreteDark);
 for (let z = TZ0 + 4; z < TZ1; z += 8) {
-  tun.box(-4.65, 3.2, z, -4.4, 3.5, z + 1.2, C.lamp);
-  tun.box(4.4, 3.2, z, 4.65, 3.5, z + 1.2, C.lamp);
+  lights.box(-4.65, 3.2, z, -4.4, 3.5, z + 1.2, C.lamp);
+  lights.box(4.4, 3.2, z, 4.65, 3.5, z + 1.2, C.lamp);
   tun.box(-5.2, 0, z - 0.3, -4.4, 4.2, z + 0.3, C.concreteDark);
 }
 tun.box(-4.6, 2.6, TZ0, -4.3, 2.8, TZ1, C.pipe);
@@ -437,18 +440,132 @@ crate('Hall', STOPS.hall, 5, 2);
 crate('Platform', STOPS.platformA, 7, 2.4);
 crate('Tunnel', STOPS.tunnelB, 7, 1.2);
 
+// ---------- Detail pass (M5) ----------
+// Set dressing only: none of it is a Cover_ marker, and all of it sits on walls, ceilings, floors or
+// outside the firing lines, so it never hides an enemy or blocks a shot.
+
+/** A fixed-seed generator for prop variety, so the .glb is identical on every run. */
+let seed = 20261116;
+const pick = <T>(xs: readonly T[]): T => {
+  seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+  return xs[seed % xs.length]!;
+};
+
+const POSTER = [0xd8323c, 0x2f6fd6, 0xf2c230, 0x1f9d8f, 0x8a3fb8, 0xf08a24];
+const LIGHT = 0xfff6d8;
+const SIGN = 0x1d4fa8;
+
+/** A poster on a wall facing +x (side = 1) or -x (side = -1): frame, panel and two bands of "type". */
+function poster(mb: MeshBuilder, x: number, z: number, y: number, side: 1 | -1, w = 1.6, h = 2.2): void {
+  const d = side * 0.04;
+  mb.box(x, y, z - w / 2 - 0.08, x + d * 1.5, y + h + 0.16, z + w / 2 + 0.08, 0x2b2b2b);
+  const color = pick(POSTER);
+  mb.box(x + d, y + 0.08, z - w / 2, x + d * 2.5, y + h + 0.08, z + w / 2, color);
+  mb.box(x + d * 2.5, y + h * 0.62, z - w * 0.38, x + d * 3, y + h * 0.72, z + w * 0.38, 0xf7f3e8);
+  mb.box(x + d * 2.5, y + h * 0.18, z - w * 0.3, x + d * 3, y + h * 0.24, z + w * 0.1, 0xf7f3e8);
+}
+
+/** A hanging station sign: a dark-blue board with a white line of "type" and a coloured line badge. */
+function sign(mb: MeshBuilder, x0: number, x1: number, z: number, y: number): void {
+  for (const x of [x0 + 0.2, x1 - 0.2])
+    mb.box(x - 0.03, y + 0.6, z - 0.03, x + 0.03, y + 1.6, z + 0.03, 0x555b66);
+  mb.box(x0, y, z - 0.06, x1, y + 0.6, z + 0.06, SIGN);
+  mb.box(x0 + 0.5, y + 0.22, z - 0.08, x1 - 1.2, y + 0.36, z + 0.08, 0xf7f3e8);
+  mb.box(x1 - 0.9, y + 0.12, z - 0.08, x1 - 0.3, y + 0.48, z + 0.08, 0xffd21f);
+}
+
+/** A ceiling light panel. */
+function lamp(_area: MeshBuilder, x: number, z: number, y: number, len = 2.4, w = 0.4): void {
+  lights.box(x - w / 2, y - 0.12, z - len / 2, x + w / 2, y, z + len / 2, LIGHT, { bottom: true });
+}
+
+// Ticket hall: light rows, posters, a tactile guide line, signs over the fare gates, a clock, bins.
+for (let z = 2; z <= 42; z += 6) for (const x of [-6, 0, 6]) lamp(hall, x, z, 6);
+for (let z = 5; z <= 37; z += 8) poster(hall, -12, z + 4, 1.4, 1);
+for (let z = 3; z <= 36; z += 9) poster(hall, 12, z, 2.1, -1, 1.4, 1.6);
+hall.box(-3.15, 0, -1.5, -2.85, 0.015, 40, 0xffd21f);
+sign(hall, -11, -3, 38.5, 4.0);
+sign(hall, 3, 9, 38.5, 4.0);
+hall.box(-1, 4.4, 43.2, 1, 5.4, 43.6, 0xf7f3e8);
+hall.box(-0.05, 4.9, 43.1, 0.05, 5.3, 43.2, 0x2b2b2b);
+hall.box(-0.05, 4.85, 43.1, 0.35, 4.95, 43.2, 0x2b2b2b);
+for (const [x, z] of [
+  [-8.9, 8],
+  [8.9, 16],
+  [-8.9, 24],
+  [8.9, 32],
+] as const) {
+  hall.box(x - 0.25, 0, z - 0.25, x + 0.25, 0.9, z + 0.25, 0x3d4a5c, { top: 0x222831 });
+}
+// Street: a kerb and two lamp posts outside the entrance.
+hall.box(-14, 0, -14.2, 14, 0.15, -13.8, 0xb0b4ba);
+for (const x of [-6, 6]) {
+  hall.box(x - 0.1, 0, -10.1, x + 0.1, 5, -9.9, 0x3a3f47);
+  lights.box(x - 0.6, 5, -10.2, x + 0.6, 5.2, -9.8, LIGHT, { bottom: true });
+}
+
+// Platform: light rows, hanging signs, posters, a tactile strip, a third rail, and train interiors.
+for (let z = PZ0 + 2; z < PZ1; z += 5) for (const x of [4, 9]) lamp(plat, x, z, 7, 2.6);
+for (let z = PZ0 + 10; z < PZ1; z += 20) sign(plat, 3, 9, z, 4.4);
+for (let z = PZ0 + 5; z < PZ1 - 4; z += 10) poster(plat, 13, z, 1.8, -1);
+for (let z = PZ0; z < PZ1; z += 0.6) plat.box(2.6, 0, z, 2.9, 0.02, z + 0.4, 0xe0b400);
+plat.box(-5.9, -1.1, PZ0, -5.7, -0.85, PZ1, 0xb0b4ba);
+for (const z0 of [46, 70]) {
+  // Seats along the far wall and a light strip on the ceiling, seen through windows and doors.
+  for (let z = z0 + 1; z < z0 + CAR_LEN - 1; z += 3.5) {
+    plat.box(-4.55, 0, z, -3.95, 0.45, z + 2.8, 0x2f6fd6, { top: 0x3f7fe6 });
+    plat.box(-4.6, 0.45, z, -4.45, 1.1, z + 2.8, 0x2f6fd6);
+  }
+  lights.box(-3, 3.1, z0 + 1, -2.4, 3.18, z0 + CAR_LEN - 1, LIGHT, { bottom: true });
+  for (let z = z0 + 2; z < z0 + CAR_LEN; z += 7) plat.box(-2.75, 0, z, -2.65, 3.1, z + 0.1, 0xcfd4da);
+}
+
+// Tunnel: cables, signal lights and a handrail along the walkway edge.
+for (const [y, c] of [
+  [3.6, 0x2b2b2b],
+  [3.75, 0x6b3a1c],
+  [3.9, 0x2b2b2b],
+] as const) {
+  tun.box(4.4, y, TZ0, 4.55, y + 0.08, TZ1, c);
+}
+for (let z = TZ0 + 10; z < TZ1; z += 16) {
+  tun.box(4.3, 2.2, z, 4.6, 2.9, z + 0.3, 0x1a1a1a);
+  tun.box(4.25, 2.6, z + 0.05, 4.3, 2.8, z + 0.25, pick([0xd8323c, 0x3ddc84]));
+}
+for (let z = TZ0 + 2; z < TZ1; z += 4) tun.box(0.3, 0, z, 0.38, 1.0, z + 0.08, 0xd8d0b0);
+tun.box(0.28, 0.95, TZ0 + 2, 0.4, 1.02, TZ1 - 2, C.hazard);
+
+// Depot: shelving with boxes, hanging lamps and floor markings.
+for (const [x0, x1] of [
+  [-9.9, -9.1],
+  [9.1, 9.9],
+] as const) {
+  for (let z = 180; z <= 188; z += 4) {
+    for (const y of [0, 1.1, 2.2]) tun.box(x0, y + 0.95, z, x1, y + 1.0, z + 3.4, 0x5b5f66);
+    for (const dz of [0, 3.35]) tun.box(x0, 0, z + dz, x1, 3.3, z + dz + 0.05, 0x5b5f66);
+    for (const y of [0, 1.1, 2.2]) {
+      tun.box(x0 + 0.1, y + 1.0, z + 0.3, x1 - 0.1, y + 1.5, z + 1.4, pick([C.crate, C.crateDark, 0x8a8f96]));
+      tun.box(x0 + 0.1, y + 1.0, z + 1.9, x1 - 0.1, y + 1.4, z + 3.0, pick([C.crate, 0x6c7480, C.crateDark]));
+    }
+  }
+}
+for (const x of [-6, 0, 6]) for (const z of [178, 186]) lamp(tun, x, z, 6, 1.6, 0.6);
+for (let x = -9; x <= 9; x += 3) tun.box(x, 0, 174.6, x + 1.5, 0.015, 174.8, C.hazard);
+tun.box(-9.5, 0, 190, 9.5, 0.015, 190.2, C.hazard);
+
 // ---------- Write ----------
 
 const scene: NodeData[] = [
   { name: 'Hall', mesh: hall.mesh },
   { name: 'Platform', mesh: plat.mesh },
   { name: 'Tunnel', mesh: tun.mesh },
+  { name: 'Lights', mesh: lights.mesh },
   { name: 'Markers', children: markers },
 ];
 const out = 'public/assets/stages/stage1.glb';
 const bytes = writeGlb(scene);
 writeFileSync(out, bytes);
-const tris = hall.triangles + plat.triangles + tun.triangles;
+const tris = hall.triangles + plat.triangles + tun.triangles + lights.triangles;
 console.log(
   `greybox: wrote ${out}: ${(bytes.byteLength / 1024).toFixed(0)} KB, ${tris} triangles, ${markers.length} markers, rail ${rail.length.toFixed(1)} m`,
 );
