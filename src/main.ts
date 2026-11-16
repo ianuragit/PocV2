@@ -1,38 +1,35 @@
-import { Renderer } from './view/renderer';
+import { App } from './app';
+import { installDebugHooks } from './debug/hooks';
+import type { Difficulty } from './sim';
+import { Screens } from './ui/screens';
+import { loadGameData } from './view/data';
 
-const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
-const title = document.querySelector<HTMLDivElement>('#title')!;
-const version = document.querySelector<HTMLDivElement>('#version')!;
+const STAGES: Record<string, string> = { '1': 'stage1', stage1: 'stage1', range: 'range' };
+const DIFFICULTIES = new Set<Difficulty>(['easy', 'normal', 'hard']);
 
-version.textContent = `build ${__COMMIT__}`;
+async function boot(): Promise<void> {
+  document.querySelector('#version')!.textContent = `build ${__COMMIT__}`;
+  const params = new URLSearchParams(location.search);
+  const debug = params.get('debug') === '1';
+  const stageId = STAGES[params.get('stage') ?? '1'] ?? 'stage1';
+  const difficulty = (params.get('difficulty') ?? 'normal') as Difficulty;
+  const stop = Math.max(0, Number(params.get('stop') ?? '1') - 1);
 
-const view = new Renderer(canvas);
-let frames = 0;
-let started = false;
-let last = performance.now();
-
-function tick(now: number): void {
-  const dt = Math.min((now - last) / 1000, 0.1);
-  last = now;
-  view.frame(dt);
-  frames++;
-  requestAnimationFrame(tick);
+  try {
+    const data = await loadGameData(stageId);
+    const app = new App({
+      data,
+      difficulty: DIFFICULTIES.has(difficulty) ? difficulty : 'normal',
+      seed: Number(params.get('seed') ?? Date.now() % 1_000_000),
+      startStop: Number.isInteger(stop) ? stop : 0,
+      god: params.get('god') === '1',
+      debug,
+    });
+    if (import.meta.env.DEV || debug) installDebugHooks(app);
+  } catch (err) {
+    console.error(err);
+    new Screens().show('error', { message: err instanceof Error ? err.message : String(err) });
+  }
 }
-requestAnimationFrame(tick);
 
-title.addEventListener('click', () => {
-  started = true;
-  title.classList.add('hidden');
-});
-
-canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-
-if (
-  import.meta.env.DEV ||
-  import.meta.env.MODE === 'test' ||
-  new URLSearchParams(location.search).has('debug')
-) {
-  (window as unknown as { __game: unknown }).__game = {
-    state: () => ({ frames, started, commit: __COMMIT__ }),
-  };
-}
+void boot();

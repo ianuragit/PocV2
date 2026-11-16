@@ -2,7 +2,9 @@
   --bg: #050608;
   --fg: #f3f5f7;
   --accent: #ffcc1a;
+  --danger: #ff3b30;
   --muted: #8a93a0;
+  --panel: rgba(8, 10, 14, 0.72);
 }
 
 * {
@@ -19,47 +21,220 @@ body {
   overflow: hidden;
 }
 
-/* 16:9 letterbox that scales to the window */
+/* 16:9 letterbox that scales to the window. Sizes inside use container units (cqh). */
 #stage {
   position: absolute;
   inset: 0;
   margin: auto;
   width: min(100vw, calc(100vh * 16 / 9));
   height: min(100vh, calc(100vw * 9 / 16));
+  container-type: size;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
 }
 
-#game {
+#stage.playing {
+  cursor: none;
+}
+
+#game,
+#overlay {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.overlay {
+#overlay,
+#hud,
+#flash,
+#popups {
+  pointer-events: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---------- HUD ---------- */
+
+#hud {
+  position: absolute;
+  inset: 0;
+  font-weight: 800;
+  text-shadow:
+    0 0.15cqh 0 #000,
+    0 0 0.6cqh #000;
+}
+
+.hud-score {
+  position: absolute;
+  left: 3cqh;
+  top: 2.5cqh;
+  font-size: 5cqh;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+#combo {
+  margin-left: 1.5cqh;
+  font-size: 3.4cqh;
+  color: var(--accent);
+}
+
+.hud-lives {
+  position: absolute;
+  right: 3cqh;
+  top: 2.5cqh;
+  display: flex;
+  gap: 0.8cqh;
+}
+
+.life {
+  width: 3.2cqh;
+  height: 3.6cqh;
+  background: #4fa3ff;
+  clip-path: polygon(50% 0, 100% 18%, 92% 70%, 50% 100%, 8% 70%, 0 18%);
+}
+
+.hud-ammo {
+  position: absolute;
+  right: 3cqh;
+  bottom: 3cqh;
+  display: flex;
+  gap: 0.7cqh;
+}
+
+.round {
+  width: 1.6cqh;
+  height: 5cqh;
+  border-radius: 0.8cqh 0.8cqh 0.2cqh 0.2cqh;
+  background: linear-gradient(#ffd66b 0 30%, #c9922b 30%);
+  box-shadow: 0 0 0.4cqh #000;
+}
+
+.round.spent {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.hud-reload {
+  position: absolute;
+  right: 3cqh;
+  bottom: 9.5cqh;
+  font-size: 3.4cqh;
+  color: var(--danger);
+  animation: blink 0.5s steps(2, start) infinite;
+}
+
+.hud-banner {
+  position: absolute;
+  inset: 40% 0 auto;
+  text-align: center;
+  font-size: 8cqh;
+  font-style: italic;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.hud-banner.show {
+  opacity: 1;
+}
+
+#flash {
+  position: absolute;
+  inset: 0;
+  background: var(--danger);
+  opacity: 0;
+}
+
+#flash.hit {
+  animation: flash 0.35s ease-out;
+}
+
+@keyframes flash {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.popup {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 3cqh;
+  font-weight: 900;
+  color: var(--accent);
+  text-shadow: 0 0.15cqh 0 #000;
+  animation: rise 0.7s ease-out forwards;
+}
+
+.popup.bad {
+  color: #6fb6ff;
+}
+
+@keyframes rise {
+  to {
+    transform: translate(-50%, -260%);
+    opacity: 0;
+  }
+}
+
+/* ---------- Screens ---------- */
+
+.screen {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2cqh;
   cursor: pointer;
-  user-select: none;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.7));
 }
 
-.overlay h1 {
+.screen h1 {
   margin: 0;
-  font-size: clamp(2rem, 8vw, 6rem);
+  font-size: 13cqh;
   font-weight: 900;
   letter-spacing: 0.08em;
   color: var(--accent);
   text-shadow: 0 0.06em 0 #a33;
 }
 
-.overlay.hidden {
-  display: none;
+.screen h2 {
+  margin: 0;
+  font-size: 9cqh;
+  font-weight: 900;
+  font-style: italic;
+  color: var(--accent);
+  text-shadow: 0 0.06em 0 #a33;
+}
+
+.screen p {
+  margin: 0;
+  font-size: 3.4cqh;
+}
+
+.screen .stats {
+  font-size: 4cqh;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.screen .controls {
+  font-size: 2.4cqh;
+  color: var(--muted);
 }
 
 .blink {
-  font-size: clamp(1rem, 2.5vw, 1.6rem);
   animation: blink 1.2s steps(2, start) infinite;
 }
 
@@ -77,4 +252,5 @@ body {
     12px ui-monospace,
     monospace;
   color: var(--muted);
+  pointer-events: none;
 }

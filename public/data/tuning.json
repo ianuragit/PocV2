@@ -1,3 +1,31 @@
 {
-  "version": 1
+  "version": 1,
+  "step_hz": 60,
+  "player": { "invulnerable_time": 1.0, "ring_pause_on_hit": 0.5, "bonus_lives_at": [50000, 150000] },
+  "difficulty": {
+    "easy": { "lives": 7, "max_rings": 2, "aim_time_scale": 1.25 },
+    "normal": { "lives": 5, "max_rings": 3, "aim_time_scale": 1.0 },
+    "hard": { "lives": 3, "max_rings": 4, "aim_time_scale": 0.85 }
+  },
+  "rings": { "start_scale": 3, "end_scale": 1, "reaim_jitter": 0.1, "amber_at": 0.45, "red_at": 0.75 },
+  "revolver": { "capacity": 6, "max_shots_per_second": 8, "reload_time": 0.35 },
+  "scoring": { "gun_hand": 500, "head": 300, "body": 200, "thrown": 100, "combo_step": 3, "combo_cap": 5 },
+  "director": { "wave_gap": 0.5 },
+  "entries": { "appear": 0, "lean_out": 0.3, "stand_up": 0.5, "run_in": 0.8 },
+  "civilian": { "stay_time": 3.0 },
+  "body": {
+    "height": 1.8,
+    "body_bottom": 0.25,
+    "body_top": 1.4,
+    "body_radius": 0.25,
+    "head_height": 1.62,
+    "head_radius": 0.13,
+    "hand_offset": [0.35, 1.25, 0.3],
+    "hand_radius": 0.1
+  },
+  "enemies": {
+    "grunt": { "aim_time": 2.0, "hits": 1 },
+    "runner": { "aim_time": 1.5, "hits": 1 },
+    "heavy": { "aim_time": 2.8, "hits": 3 }
+  }
 }

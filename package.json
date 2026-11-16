@@ -11,8 +11,9 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "coverage": "vitest run --coverage",
     "test:e2e": "playwright test --trace off",
-    "validate": "node tools/validate.mjs",
+    "validate": "node tools/validate.mjs && vitest run tests/data",
     "budget": "node tools/check-size-budget.mjs"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "@playwright/test": "1.63.0",
     "@types/node": "24.19.2",
     "@types/three": "0.187.0",
+    "@vitest/coverage-v8": "^5.1.0",
     "eslint": "10.15.0",
     "prettier": "3.10.1",
     "typescript": "5.9.3",

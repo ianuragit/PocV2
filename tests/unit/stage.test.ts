@@ -1,0 +1,134 @@
+import { describe, expect, it } from 'vitest';
+import { resolveStage, validateStage } from '../../src/sim/stage';
+import type { StageDef } from '../../src/sim/types';
+import { stage1, stage1Markers, tuning } from '../helpers';
+
+const t = tuning();
+const markers = stage1Markers();
+const edit = (fn: (s: StageDef) => void): StageDef => {
+  const s = stage1() as StageDef;
+  fn(s);
+  return s;
+};
+const errorsFor = (fn: (s: StageDef) => void) => validateStage(edit(fn), markers, t);
+const firstSpawn = (s: StageDef) => s.scenes[0]!.stops[0]!.waves[0]!.spawns[0]!;
+
+describe('validateStage', () => {
+  it('accepts stage 1', () => {
+    expect(validateStage(stage1(), markers, t)).toEqual([]);
+  });
+
+  it('fails when a stage names a marker that does not exist', () => {
+    expect(errorsFor((s) => (firstSpawn(s).marker = 'Spawn_Nowhere'))).toEqual([
+      'scenes[0].stops[0].waves[0].spawns[0].marker: marker "Spawn_Nowhere" does not exist',
+    ]);
+    expect(errorsFor((s) => (s.scenes[0]!.stops[0]!.look_at = 'Spawn_Gate'))[0]).toMatch(
+      /must start with Look_/,
+    );
+  });
+
+  it('rejects unknown types and entries, bad delays and aim times', () => {
+    const errors = errorsFor((s) => {
+      const sp = firstSpawn(s);
+      sp.type = 'dragon';
+      sp.entry = 'teleport';
+      sp.delay = -1;
+      sp.aim_time = 0;
+    });
+    expect(errors.join('\n')).toMatch(/unknown type "dragon"/);
+    expect(errors.join('\n')).toMatch(/unknown entry "teleport"/);
+    expect(errors.join('\n')).toMatch(/delay: must be a number >= 0/);
+    expect(errors.join('\n')).toMatch(/aim_time: must be a number > 0/);
+  });
+
+  it('requires stop offsets to ascend and stay on the path', () => {
+    expect(errorsFor((s) => (s.scenes[0]!.stops[1]!.path_offset = 1)).join()).toMatch(
+      /greater than the previous stop/,
+    );
+    expect(errorsFor((s) => (s.scenes[1]!.stops[1]!.path_offset = 500)).join()).toMatch(
+      /past the end of the path/,
+    );
+    expect(errorsFor((s) => (s.scenes[0]!.stops[0]!.travel_speed = 0)).join()).toMatch(/travel_speed/);
+  });
+
+  it('requires rank thresholds to ascend', () => {
+    expect(errorsFor((s) => (s.rank_thresholds = { S: 1, A: 2, B: 3 }))).toEqual([
+      'rank_thresholds: must ascend: B < A < S',
+    ]);
+    expect(errorsFor((s) => delete (s as Partial<StageDef>).rank_thresholds)[0]).toMatch(
+      /numeric S, A and B/,
+    );
+  });
+
+  it('rejects a wave that holds only civilians', () => {
+    const errors = errorsFor((s) => {
+      s.scenes[0]!.stops[0]!.waves[0]!.spawns = [
+        { type: 'civilian', marker: 'Spawn_Kiosk', entry: 'appear', delay: 0 },
+      ];
+    });
+    expect(errors).toEqual([
+      'scenes[0].stops[0].waves[0]: needs at least one enemy, or it can never be cleared',
+    ]);
+  });
+
+  it('reports structural problems', () => {
+    expect(validateStage(null, markers, t)).toEqual(['stage: must be an object']);
+    expect(validateStage({}, {}, t)).toEqual(
+      expect.arrayContaining([
+        'id: must be a non-empty string',
+        'markers: need at least two Path_ markers',
+        'scenes: must be a non-empty array',
+      ]),
+    );
+    const broken = {
+      ...(stage1() as object),
+      scenes: [5, { stops: [] }, { id: 'x', stops: [7, { waves: [] }, { waves: [{}, { spawns: [3] }] }] }],
+    };
+    const errors = validateStage(broken, markers, t).join('\n');
+    expect(errors).toMatch(/scenes\[0\]: must be an object/);
+    expect(errors).toMatch(/scenes\[1\]\.stops: must be a non-empty array/);
+    expect(errors).toMatch(/scenes\[2\]\.stops\[0\]: must be an object/);
+    expect(errors).toMatch(/scenes\[2\]\.stops\[1\]\.waves: must be a non-empty array/);
+    expect(errors).toMatch(/scenes\[2\]\.stops\[2\]\.waves\[0\]\.spawns: must be a non-empty array/);
+    expect(errors).toMatch(/scenes\[2\]\.stops\[2\]\.waves\[1\]\.spawns\[0\]: must be an object/);
+  });
+});
+
+describe('resolveStage', () => {
+  it('converts seconds to frames and marker names to positions', () => {
+    const r = resolveStage(stage1(), markers, t);
+    expect(r.stops).toHaveLength(5);
+    const second = r.stops[0]!.waves[0]![1]!;
+    expect(second).toMatchObject({
+      type: 'grunt',
+      delayFrames: 36,
+      entryFrames: 48,
+      aimTime: 1.8,
+      position: { x: 2, y: 0, z: 11 },
+    });
+    expect(r.stops[0]!.waves[0]![2]!.civilian).toBe(true);
+    expect(r.stops[0]!.stepDistance).toBeCloseTo(4 / 60);
+    expect(r.covers).toEqual([
+      { name: 'Cover_Column', min: { x: -6.5, y: 0, z: 13.5 }, max: { x: -5.5, y: 2, z: 14.5 } },
+    ]);
+  });
+
+  it('gives cover boxes without a scale a unit size', () => {
+    const m = {
+      ...markers,
+      Cover_Crate: {
+        position: [0, 0, 0] as [number, number, number],
+        rotation: [0, 0, 0] as [number, number, number],
+      },
+    };
+    expect(resolveStage(stage1(), m, t).covers.find((c) => c.name === 'Cover_Crate')!.max).toEqual({
+      x: 0.5,
+      y: 0.5,
+      z: 0.5,
+    });
+  });
+
+  it('throws with every error listed', () => {
+    expect(() => resolveStage({}, markers, t)).toThrow(/Invalid stage:\nid: must be a non-empty string/);
+  });
+});

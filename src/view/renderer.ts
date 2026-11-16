@@ -1,21 +1,35 @@
-import { BoxGeometry, Color, Mesh, MeshNormalMaterial, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import {
+  Color,
+  DirectionalLight,
+  Fog,
+  HemisphereLight,
+  PerspectiveCamera,
+  Scene,
+  Vector3,
+  WebGLRenderer,
+} from 'three';
+import type { Vec3 } from '../sim';
 
 const MAX_PIXEL_RATIO = 2;
+const LOOK_SMOOTHING = 6; // per second; higher turns the camera faster toward a new look target
 
-/** M0 placeholder scene: a spinning cube, sized to the letterboxed canvas. */
+/** Owns the WebGL renderer, scene and camera. The canvas is letterboxed to 16:9 by CSS. */
 export class Renderer {
-  readonly renderer: WebGLRenderer;
+  readonly gl: WebGLRenderer;
   readonly scene = new Scene();
-  readonly camera = new PerspectiveCamera(60, 16 / 9, 0.1, 100);
-  private readonly cube: Mesh;
+  readonly camera = new PerspectiveCamera(60, 16 / 9, 0.1, 200);
+  private readonly look = new Vector3();
+  private lookInitialised = false;
 
-  constructor(private readonly canvas: HTMLCanvasElement) {
-    this.renderer = new WebGLRenderer({ canvas, antialias: true });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
-    this.scene.background = new Color(0x10141c);
-    this.camera.position.set(0, 0, 4);
-    this.cube = new Mesh(new BoxGeometry(1.4, 1.4, 1.4), new MeshNormalMaterial());
-    this.scene.add(this.cube);
+  constructor(readonly canvas: HTMLCanvasElement) {
+    this.gl = new WebGLRenderer({ canvas, antialias: true });
+    this.gl.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
+    this.scene.background = new Color(0x1a1f29);
+    this.scene.fog = new Fog(0x1a1f29, 25, 70);
+    this.scene.add(new HemisphereLight(0xdde6ff, 0x30281e, 1.6));
+    const sun = new DirectionalLight(0xffffff, 1.4);
+    sun.position.set(4, 10, -2);
+    this.scene.add(sun);
     this.resize();
     new ResizeObserver(() => this.resize()).observe(canvas);
   }
@@ -23,14 +37,31 @@ export class Renderer {
   resize(): void {
     const { clientWidth: w, clientHeight: h } = this.canvas;
     if (w === 0 || h === 0) return;
-    this.renderer.setSize(w, h, false);
+    this.gl.setSize(w, h, false);
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
   }
 
-  frame(dt: number): void {
-    this.cube.rotation.x += dt * 0.7;
-    this.cube.rotation.y += dt * 1.1;
-    this.renderer.render(this.scene, this.camera);
+  /** Places the camera; the look direction eases toward its target so stop changes turn smoothly. */
+  placeCamera(position: Vec3, lookAt: Vec3, dt: number): void {
+    this.camera.position.set(position.x, position.y, position.z);
+    const target = new Vector3(lookAt.x, lookAt.y, lookAt.z);
+    if (!this.lookInitialised || dt <= 0) {
+      this.look.copy(target);
+      this.lookInitialised = true;
+    } else {
+      this.look.lerp(target, 1 - Math.exp(-LOOK_SMOOTHING * dt));
+    }
+    this.camera.lookAt(this.look);
+    this.camera.updateMatrixWorld();
+  }
+
+  /** Snap the look direction on the next placement (new game, debug jumps). */
+  resetLook(): void {
+    this.lookInitialised = false;
+  }
+
+  render(): void {
+    this.gl.render(this.scene, this.camera);
   }
 }

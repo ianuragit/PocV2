@@ -1,27 +1,34 @@
 import { expect, test } from '@playwright/test';
+import { openGame, watchErrors } from './game';
 
-type GameState = { frames: number; started: boolean; commit: string };
-
-test('title boots, renders, and click-to-start works', async ({ page }) => {
-  const errors: string[] = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  page.on('console', (m) => {
-    if (m.type() === 'error') errors.push(m.text());
-  });
-
-  await page.goto('./?debug=1');
-  await expect(page.locator('#title h1')).toHaveText('REAL COP 2');
+test('boots to the title, starts on click, and clears stop 1 of stage 1', async ({ page }) => {
+  const errors = watchErrors(page);
+  const g = await openGame(page, 'stage=1&seed=42&debug=1');
   await expect(page.locator('#version')).toContainText('build ');
 
-  const state = () =>
-    page.evaluate(() => (window as unknown as { __game: { state(): GameState } }).__game.state());
-  await expect.poll(async () => (await state()).frames).toBeGreaterThan(10);
-  await page.screenshot({ path: 'test-results/screenshots/title.png' });
+  await page.locator('#screen').click();
+  await expect(page.locator('#screen')).toBeHidden();
+  await expect(page.locator('#hud')).toBeVisible();
 
-  await page.locator('#title').click();
-  await expect(page.locator('#title')).toBeHidden();
-  expect((await state()).started).toBe(true);
-  await page.screenshot({ path: 'test-results/screenshots/cube.png' });
-
+  // Play stop 1 through the real click path: shoot each enemy in the body as soon as it is visible.
+  for (let i = 0; i < 600; i++) {
+    const state = await g.state();
+    if (state.stop > 0) break;
+    const target = state.actors.find(
+      (a) => !a.civilian && ['entering', 'waiting', 'aiming'].includes(a.phase),
+    );
+    if (target && state.weapon.cooldown === 0) {
+      if (state.weapon.ammo === 0) await page.keyboard.press('r');
+      else {
+        const p = (await g.zoneScreen(target.id, 'body'))!;
+        await g.fireAt(p.x, p.y);
+      }
+    }
+    await g.stepFrames(1);
+  }
+  const state = await g.state();
+  expect(state.stop).toBe(1);
+  expect(state.lives).toBe(5);
+  expect(state.score.score).toBeGreaterThan(0);
   expect(errors).toEqual([]);
 });
