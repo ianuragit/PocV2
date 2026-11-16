@@ -1,0 +1,24 @@
+# Real Cop 2 (web)
+
+On-rails 3D shooter in the browser. TypeScript strict, Three.js, Vite.
+Design: docs/design.md. Build spec: docs/spec.md.
+
+## Commands
+
+- Dev server: npm run dev
+- All checks: npm run lint && npm run typecheck && npm run validate && npm test
+- Build: npm run build && npm run budget
+- Browser test: npm run test:e2e (screenshots land in test-results/)
+- Jump in: http://localhost:5173/PocV2/?stage=1&stop=4&seed=42&debug=1
+
+## Rules
+
+- src/sim/ is pure: no three, no DOM, no Date, no Math.random. Every rule there has a unit test.
+- src/view/ never mutates game state. It reads state and reacts to events.
+- No gameplay numbers in code. Read them from public/data/tuning.json.
+- New encounters are JSON in public/data/stages/. Do not hard-code spawns.
+- Do not add dependencies without asking. Do not add or download assets; use primitives and ask.
+- After any view or UI change, run the browser test and look at the screenshots before saying it is done.
+- Stay inside the size budgets. If a change breaks one, say so instead of raising the budget.
+- One issue per PR. If a task needs a judgment about feel, stop and ask for numbers.
+- All names, stages, models and sounds are original. Do not reference or copy any existing game's content.

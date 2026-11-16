@@ -1,0 +1,6 @@
+# Asset licence log
+
+Every file under `public/assets/` needs a row here. Only CC0, CC-BY (credited on the Credits screen) or original work.
+
+| File | Source | Author | Licence |
+| ---- | ------ | ------ | ------- |
