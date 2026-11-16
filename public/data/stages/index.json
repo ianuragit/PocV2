@@ -1,0 +1,7 @@
+{
+  "stages": [
+    { "id": "stage1", "name": "Metro Station" },
+    { "id": "stage2", "name": "Studio Backlot" },
+    { "id": "stage3", "name": "Hillside Dam" }
+  ]
+}

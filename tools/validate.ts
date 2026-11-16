@@ -23,7 +23,9 @@ try {
 }
 
 const STAGES = 'public/data/stages';
-const stageFiles = readdirSync(STAGES).filter((f) => f.endsWith('.json') && !f.endsWith('.markers.json'));
+const stageFiles = readdirSync(STAGES).filter(
+  (f) => f.endsWith('.json') && !f.endsWith('.markers.json') && f !== 'index.json',
+);
 if (stageFiles.length === 0) fail(`${STAGES}: no stages`);
 for (const file of stageFiles) {
   const path = join(STAGES, file);
@@ -47,6 +49,17 @@ for (const file of stageFiles) {
       }
     }
   }
+}
+
+// Stage catalogue: every listed stage exists and its name matches the stage file.
+const catalog = readJson(join(STAGES, 'index.json')) as { stages?: { id: string; name: string }[] };
+if (!Array.isArray(catalog.stages) || catalog.stages.length === 0)
+  fail(`${STAGES}/index.json: needs a stages list`);
+for (const entry of catalog.stages ?? []) {
+  const file = join(STAGES, `${entry.id}.json`);
+  if (!existsSync(file)) fail(`${STAGES}/index.json: ${entry.id} has no ${file}`);
+  else if ((readJson(file) as { name?: string }).name !== entry.name)
+    fail(`${STAGES}/index.json: name for ${entry.id} differs from ${file}`);
 }
 
 // Licence log: every asset file needs a row naming it in ASSETS.md.

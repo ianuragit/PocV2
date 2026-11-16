@@ -545,3 +545,13 @@ body {
 .credits a {
   color: var(--cool);
 }
+
+.screen .unlock {
+  font-family: var(--arcade);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 3.2cqh;
+  color: var(--cool);
+  -webkit-text-stroke: 0.25cqh var(--ink);
+  paint-order: stroke fill;
+}

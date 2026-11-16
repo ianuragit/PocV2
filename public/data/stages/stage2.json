@@ -1,0 +1,407 @@
+{
+  "id": "stage2",
+  "name": "Studio Backlot",
+  "environment": "stages/stage2.glb",
+  "music": "audio/music/stage2.ogg",
+  "rank_thresholds": {
+    "S": 78000,
+    "A": 60000,
+    "B": 36000
+  },
+  "scenes": [
+    {
+      "id": "lot",
+      "stops": [
+        {
+          "path_offset": 12,
+          "travel_speed": 4,
+          "look_at": "Look_LotA",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_LotCasesLeft",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_LotRoad",
+                  "entry": "run_in",
+                  "delay": 0.5
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_LotCivilian",
+                  "entry": "run_in",
+                  "delay": 0.2
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "thrower",
+                  "marker": "Spawn_LotDoorL",
+                  "entry": "stand_up",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 28,
+          "travel_speed": 4,
+          "look_at": "Look_LotB",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_LotCartLeft",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "shield",
+                  "marker": "Spawn_LotCartBehind",
+                  "entry": "run_in",
+                  "delay": 0.4
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_LotBCivilian",
+                  "entry": "stand_up",
+                  "delay": 0.2
+                },
+                {
+                  "type": "crate",
+                  "marker": "Crate_Lot",
+                  "entry": "appear",
+                  "delay": 0,
+                  "weapon": "shotgun"
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "runner",
+                  "marker": "Spawn_LotDoorR",
+                  "entry": "run_in",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_LotAwning",
+                  "entry": "appear",
+                  "delay": 0.5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 44,
+          "travel_speed": 4,
+          "look_at": "Look_LotC",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_LotGenRight",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_LotMid",
+                  "entry": "run_in",
+                  "delay": 0.4
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_LotFarR",
+                  "entry": "run_in",
+                  "delay": 0.8
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "heavy",
+                  "marker": "Spawn_LotFarL",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "soundstage",
+      "stops": [
+        {
+          "path_offset": 74.4,
+          "travel_speed": 4.5,
+          "look_at": "Look_StageA",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_StageDollyLeft",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_StageFloorL",
+                  "entry": "run_in",
+                  "delay": 0.3
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_StageCrew",
+                  "entry": "stand_up",
+                  "delay": 0.2
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "shield",
+                  "marker": "Spawn_StageFloorR",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 92.4,
+          "travel_speed": 4.5,
+          "look_at": "Look_StageB",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_CastleLeft",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "thrower",
+                  "marker": "Spawn_CastleTop",
+                  "entry": "stand_up",
+                  "delay": 0.4
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_RocksRight",
+                  "entry": "run_in",
+                  "delay": 0.8
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_StageBCrew",
+                  "entry": "run_in",
+                  "delay": 0.2
+                },
+                {
+                  "type": "crate",
+                  "marker": "Crate_Stage",
+                  "entry": "appear",
+                  "delay": 0,
+                  "weapon": "machine_pistol"
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "heavy",
+                  "marker": "Spawn_StageBMid",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 108.4,
+          "travel_speed": 4.5,
+          "look_at": "Look_StageC",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BalconyL",
+                  "entry": "appear",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BalconyR",
+                  "entry": "appear",
+                  "delay": 0.4
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_StageCFloor",
+                  "entry": "run_in",
+                  "delay": 0.6
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "shield",
+                  "marker": "Spawn_StageCFar",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "warehouse",
+      "stops": [
+        {
+          "path_offset": 140.9,
+          "travel_speed": 4.5,
+          "look_at": "Look_PropsA",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_CratesLeft",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_AisleL",
+                  "entry": "run_in",
+                  "delay": 0.4
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_AisleR",
+                  "entry": "run_in",
+                  "delay": 0.7
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_PropsACivilian",
+                  "entry": "stand_up",
+                  "delay": 0.2
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "heavy",
+                  "marker": "Spawn_PropsAMid",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 158.9,
+          "travel_speed": 4.5,
+          "look_at": "Look_PropsB",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_HeadRight",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "thrower",
+                  "marker": "Spawn_PropsBL",
+                  "entry": "stand_up",
+                  "delay": 0.3
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_PropsBNear",
+                  "entry": "run_in",
+                  "delay": 0.6
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "shield",
+                  "marker": "Spawn_PropsBFar",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "showdown",
+      "stops": [
+        {
+          "path_offset": 178.9,
+          "travel_speed": 3,
+          "look_at": "Look_Boss",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "boss",
+                  "marker": "Spawn_BossDeck",
+                  "entry": "stand_up",
+                  "delay": 0,
+                  "phase_markers": ["Spawn_BossDeck", "Spawn_BossBow", "Spawn_BossStern"]
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BossGuardL",
+                  "entry": "run_in",
+                  "delay": 1.5
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BossGuardR",
+                  "entry": "run_in",
+                  "delay": 2.5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

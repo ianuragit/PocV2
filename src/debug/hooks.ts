@@ -13,6 +13,8 @@ export interface DebugHooks {
   fireAt(x: number, y: number): void;
   reload(): void;
   stepFrames(n: number): unknown[];
+  /** Switches stage as the title's stage button does (downloads it now). Resolves when the title is back. */
+  selectStage(id: string): Promise<void>;
   /** Restart the stage at a stop (1-based, like the ?stop= URL parameter) and keep playing. */
   skipToStop(n: number): void;
   /** Stop or resume the frame loop's simulation steps (rendering continues). */
@@ -36,6 +38,7 @@ export function installDebugHooks(app: App): void {
     events: () => [...app.eventLog],
     start: () => app.onMenu('start'),
     menu: (action) => app.onMenu(action),
+    selectStage: (id) => app.selectStage(id),
     fireAt: (x, y) => app.input.fireAt({ x, y }),
     reload: () => app.input.queueReload(),
     stepFrames: (n) => app.stepFrames(n),

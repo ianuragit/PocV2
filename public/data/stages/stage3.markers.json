@@ -1,0 +1,853 @@
+{
+  "Cover_Barrier": {
+    "position": [
+      3.1704,
+      0.5,
+      13.3
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      1.2,
+      0.5,
+      0.3
+    ]
+  },
+  "Cover_Boulder": {
+    "position": [
+      3.3497,
+      0.65,
+      51.7314
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.75,
+      0.65,
+      0.75
+    ]
+  },
+  "Cover_Buggy": {
+    "position": [
+      -2.4,
+      0.6,
+      124.2956
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.9,
+      0.6,
+      1.25
+    ]
+  },
+  "Cover_Cabinet": {
+    "position": [
+      -2.9,
+      0.7,
+      83.5462
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.5,
+      0.7,
+      0.5
+    ]
+  },
+  "Cover_Console": {
+    "position": [
+      7.5,
+      0.6,
+      169.4626
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      1,
+      0.6,
+      0.5
+    ]
+  },
+  "Cover_Sandbags": {
+    "position": [
+      2.5,
+      0.5,
+      101.346
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      0.9,
+      0.5,
+      0.3
+    ]
+  },
+  "Cover_Truck": {
+    "position": [
+      -2.5183,
+      1.1,
+      33.4975
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      1.1,
+      1.1,
+      2.5
+    ]
+  },
+  "Crate_Crest": {
+    "position": [
+      2.46,
+      0,
+      80.05
+    ],
+    "rotation": [
+      0,
+      -2.7468,
+      0
+    ]
+  },
+  "Crate_Hall": {
+    "position": [
+      -0.66,
+      0,
+      147.97
+    ],
+    "rotation": [
+      0,
+      2.7611,
+      0
+    ]
+  },
+  "Crate_Road": {
+    "position": [
+      3.23,
+      0,
+      28
+    ],
+    "rotation": [
+      0,
+      -2.6779,
+      0
+    ]
+  },
+  "Look_Boss": {
+    "position": [
+      2,
+      2.5,
+      191.9625
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_CrestA": {
+    "position": [
+      -0.036,
+      1.2,
+      86.0462
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_CrestB": {
+    "position": [
+      0,
+      1.2,
+      104.046
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_CrestC": {
+    "position": [
+      -0.0959,
+      1.2,
+      126.0456
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_HallA": {
+    "position": [
+      1.7409,
+      1.2,
+      153.9729
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_HallB": {
+    "position": [
+      2.0262,
+      1.2,
+      171.9626
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_RoadA": {
+    "position": [
+      -0.0296,
+      1.2,
+      16
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_RoadB": {
+    "position": [
+      0.2317,
+      1.2,
+      33.9975
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Look_RoadC": {
+    "position": [
+      0.9997,
+      1.2,
+      53.9814
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_000": {
+    "position": [
+      0,
+      1.6,
+      -8
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_001": {
+    "position": [
+      0,
+      1.6,
+      10
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_002": {
+    "position": [
+      0.4,
+      1.6,
+      28
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_003": {
+    "position": [
+      1,
+      1.6,
+      44
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_004": {
+    "position": [
+      0,
+      1.6,
+      60
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_005": {
+    "position": [
+      0,
+      1.6,
+      80
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_006": {
+    "position": [
+      0,
+      1.6,
+      100
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_007": {
+    "position": [
+      0,
+      1.6,
+      120
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_008": {
+    "position": [
+      1,
+      1.6,
+      134
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_009": {
+    "position": [
+      2,
+      1.6,
+      146
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_010": {
+    "position": [
+      2,
+      1.6,
+      164
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Path_011": {
+    "position": [
+      2,
+      1.6,
+      180
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "Spawn_BarrierRight": {
+    "position": [
+      1.47,
+      0,
+      13.8
+    ],
+    "rotation": [
+      0,
+      -2.9897,
+      0
+    ]
+  },
+  "Spawn_BossCentre": {
+    "position": [
+      2,
+      2.5,
+      191.96
+    ],
+    "rotation": [
+      0,
+      3.1416,
+      0
+    ]
+  },
+  "Spawn_BossGuardL": {
+    "position": [
+      -2,
+      0,
+      183.96
+    ],
+    "rotation": [
+      0,
+      2.5536,
+      0
+    ]
+  },
+  "Spawn_BossGuardR": {
+    "position": [
+      6,
+      0,
+      184.96
+    ],
+    "rotation": [
+      0,
+      -2.6224,
+      0
+    ]
+  },
+  "Spawn_BossLeft": {
+    "position": [
+      -3,
+      2.5,
+      191.96
+    ],
+    "rotation": [
+      0,
+      2.7986,
+      0
+    ]
+  },
+  "Spawn_BossRight": {
+    "position": [
+      7,
+      2.5,
+      191.96
+    ],
+    "rotation": [
+      0,
+      -2.7986,
+      0
+    ]
+  },
+  "Spawn_BoulderRight": {
+    "position": [
+      2.1,
+      0,
+      51.78
+    ],
+    "rotation": [
+      0,
+      -3.0298,
+      0
+    ]
+  },
+  "Spawn_Bridge": {
+    "position": [
+      -1,
+      6,
+      102.05
+    ],
+    "rotation": [
+      0,
+      3.0419,
+      0
+    ]
+  },
+  "Spawn_BuggyLeft": {
+    "position": [
+      -1.1,
+      0,
+      124.05
+    ],
+    "rotation": [
+      0,
+      3.0419,
+      0
+    ]
+  },
+  "Spawn_CabinetLeft": {
+    "position": [
+      -1.94,
+      0,
+      83.55
+    ],
+    "rotation": [
+      0,
+      2.9442,
+      0
+    ]
+  },
+  "Spawn_CatwalkA": {
+    "position": [
+      11.14,
+      3.5,
+      151.97
+    ],
+    "rotation": [
+      0,
+      -2.3871,
+      0
+    ]
+  },
+  "Spawn_CatwalkB": {
+    "position": [
+      11.53,
+      3.5,
+      171.96
+    ],
+    "rotation": [
+      0,
+      -2.472,
+      0
+    ]
+  },
+  "Spawn_ConsoleRight": {
+    "position": [
+      6.03,
+      0,
+      169.46
+    ],
+    "rotation": [
+      0,
+      -2.7431,
+      0
+    ]
+  },
+  "Spawn_CrestAFar": {
+    "position": [
+      1.46,
+      0,
+      88.05
+    ],
+    "rotation": [
+      0,
+      -3.0349,
+      0
+    ]
+  },
+  "Spawn_CrestAMid": {
+    "position": [
+      -0.54,
+      0,
+      86.05
+    ],
+    "rotation": [
+      0,
+      3.1,
+      0
+    ]
+  },
+  "Spawn_CrestBFar": {
+    "position": [
+      -1.8,
+      0,
+      108.05
+    ],
+    "rotation": [
+      0,
+      3.0296,
+      0
+    ]
+  },
+  "Spawn_CrestCL": {
+    "position": [
+      2.4,
+      0,
+      126.05
+    ],
+    "rotation": [
+      0,
+      -2.9362,
+      0
+    ]
+  },
+  "Spawn_Cyclist": {
+    "position": [
+      -2,
+      0,
+      48.48
+    ],
+    "rotation": [
+      0,
+      2.7092,
+      0
+    ]
+  },
+  "Spawn_Engineer": {
+    "position": [
+      -2.6,
+      0,
+      98.05
+    ],
+    "rotation": [
+      0,
+      2.7327,
+      0
+    ]
+  },
+  "Spawn_HallAFloorL": {
+    "position": [
+      5.74,
+      0,
+      150.97
+    ],
+    "rotation": [
+      0,
+      -2.7234,
+      0
+    ]
+  },
+  "Spawn_HallAMid": {
+    "position": [
+      1.74,
+      0,
+      155.97
+    ],
+    "rotation": [
+      0,
+      3.1416,
+      0
+    ]
+  },
+  "Spawn_HallBFar": {
+    "position": [
+      1.03,
+      0,
+      177.96
+    ],
+    "rotation": [
+      0,
+      3.0861,
+      0
+    ]
+  },
+  "Spawn_HallDoor": {
+    "position": [
+      0.4,
+      0,
+      129.05
+    ],
+    "rotation": [
+      0,
+      -3.1083,
+      0
+    ]
+  },
+  "Spawn_Hiker": {
+    "position": [
+      -3.03,
+      0,
+      11
+    ],
+    "rotation": [
+      0,
+      2.7367,
+      0
+    ]
+  },
+  "Spawn_Ledge": {
+    "position": [
+      5.57,
+      3,
+      17
+    ],
+    "rotation": [
+      0,
+      -2.7348,
+      0
+    ]
+  },
+  "Spawn_RoadAFar": {
+    "position": [
+      -2.03,
+      0,
+      18
+    ],
+    "rotation": [
+      0,
+      2.9997,
+      0
+    ]
+  },
+  "Spawn_RoadBFar": {
+    "position": [
+      -1.27,
+      0,
+      40
+    ],
+    "rotation": [
+      0,
+      3.0585,
+      0
+    ]
+  },
+  "Spawn_RoadBMid": {
+    "position": [
+      1.73,
+      0,
+      35
+    ],
+    "rotation": [
+      0,
+      -3.0267,
+      0
+    ]
+  },
+  "Spawn_RoadBVerge": {
+    "position": [
+      4.58,
+      0,
+      33
+    ],
+    "rotation": [
+      0,
+      -2.765,
+      0
+    ]
+  },
+  "Spawn_RoadCFar": {
+    "position": [
+      2,
+      0,
+      57.98
+    ],
+    "rotation": [
+      0,
+      -3.0792,
+      0
+    ]
+  },
+  "Spawn_RoadCL": {
+    "position": [
+      -2.4,
+      0,
+      54.98
+    ],
+    "rotation": [
+      0,
+      2.8858,
+      0
+    ]
+  },
+  "Spawn_SandbagRight": {
+    "position": [
+      1.1,
+      0,
+      101.85
+    ],
+    "rotation": [
+      0,
+      -3.0298,
+      0
+    ]
+  },
+  "Spawn_Technician": {
+    "position": [
+      4.03,
+      0,
+      165.96
+    ],
+    "rotation": [
+      0,
+      -2.8198,
+      0
+    ]
+  },
+  "Spawn_TowerDoorL": {
+    "position": [
+      3.1,
+      0,
+      99.05
+    ],
+    "rotation": [
+      0,
+      -2.7247,
+      0
+    ]
+  },
+  "Spawn_TruckLeft": {
+    "position": [
+      -0.82,
+      0,
+      32
+    ],
+    "rotation": [
+      0,
+      3.037,
+      0
+    ]
+  },
+  "Spawn_TurbineBLeft": {
+    "position": [
+      -4.57,
+      0,
+      170.96
+    ],
+    "rotation": [
+      0,
+      2.6012,
+      0
+    ]
+  },
+  "Spawn_TurbineGap": {
+    "position": [
+      -4.46,
+      0,
+      149.97
+    ],
+    "rotation": [
+      0,
+      2.4823,
+      0
+    ]
+  }
+}

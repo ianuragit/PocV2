@@ -1,0 +1,396 @@
+{
+  "id": "stage3",
+  "name": "Hillside Dam",
+  "environment": "stages/stage3.glb",
+  "music": "audio/music/stage3.ogg",
+  "rank_thresholds": {
+    "S": 75000,
+    "A": 57000,
+    "B": 35000
+  },
+  "scenes": [
+    {
+      "id": "road",
+      "stops": [
+        {
+          "path_offset": 12,
+          "travel_speed": 4,
+          "look_at": "Look_RoadA",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BarrierRight",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_RoadAFar",
+                  "entry": "run_in",
+                  "delay": 0.4
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_Hiker",
+                  "entry": "run_in",
+                  "delay": 0.2
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "thrower",
+                  "marker": "Spawn_Ledge",
+                  "entry": "stand_up",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 30,
+          "travel_speed": 4,
+          "look_at": "Look_RoadB",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "vehicle",
+                  "marker": "Spawn_TruckLeft",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_RoadBMid",
+                  "entry": "run_in",
+                  "delay": 0.4
+                },
+                {
+                  "type": "crate",
+                  "marker": "Crate_Road",
+                  "entry": "appear",
+                  "delay": 0,
+                  "weapon": "shotgun"
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "runner",
+                  "marker": "Spawn_RoadBVerge",
+                  "entry": "run_in",
+                  "delay": 0
+                },
+                {
+                  "type": "shield",
+                  "marker": "Spawn_RoadBFar",
+                  "entry": "run_in",
+                  "delay": 0.5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 50,
+          "travel_speed": 4,
+          "look_at": "Look_RoadC",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BoulderRight",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_RoadCL",
+                  "entry": "run_in",
+                  "delay": 0.4
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_Cyclist",
+                  "entry": "run_in",
+                  "delay": 0.2
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "heavy",
+                  "marker": "Spawn_RoadCFar",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crest",
+      "stops": [
+        {
+          "path_offset": 82.1,
+          "travel_speed": 5,
+          "look_at": "Look_CrestA",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_CabinetLeft",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_CrestAMid",
+                  "entry": "run_in",
+                  "delay": 0.4
+                },
+                {
+                  "type": "crate",
+                  "marker": "Crate_Crest",
+                  "entry": "appear",
+                  "delay": 0,
+                  "weapon": "magnum"
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "shield",
+                  "marker": "Spawn_CrestAFar",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 100.1,
+          "travel_speed": 5,
+          "look_at": "Look_CrestB",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_TowerDoorL",
+                  "entry": "appear",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_SandbagRight",
+                  "entry": "lean_out",
+                  "delay": 0.3
+                },
+                {
+                  "type": "thrower",
+                  "marker": "Spawn_Bridge",
+                  "entry": "stand_up",
+                  "delay": 0.6
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_Engineer",
+                  "entry": "stand_up",
+                  "delay": 0.2
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "heavy",
+                  "marker": "Spawn_CrestBFar",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 122.1,
+          "travel_speed": 5,
+          "look_at": "Look_CrestC",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "vehicle",
+                  "marker": "Spawn_BuggyLeft",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "thrower",
+                  "marker": "Spawn_CrestCL",
+                  "entry": "stand_up",
+                  "delay": 0.4
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "runner",
+                  "marker": "Spawn_HallDoor",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hall",
+      "stops": [
+        {
+          "path_offset": 150.1,
+          "travel_speed": 4.5,
+          "look_at": "Look_HallA",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_HallAFloorL",
+                  "entry": "run_in",
+                  "delay": 0
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_CatwalkA",
+                  "entry": "appear",
+                  "delay": 0.4
+                },
+                {
+                  "type": "runner",
+                  "marker": "Spawn_TurbineGap",
+                  "entry": "run_in",
+                  "delay": 0.7
+                },
+                {
+                  "type": "crate",
+                  "marker": "Crate_Hall",
+                  "entry": "appear",
+                  "delay": 0,
+                  "weapon": "machine_pistol"
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "shield",
+                  "marker": "Spawn_HallAMid",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path_offset": 168.1,
+          "travel_speed": 4.5,
+          "look_at": "Look_HallB",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_ConsoleRight",
+                  "entry": "lean_out",
+                  "delay": 0
+                },
+                {
+                  "type": "thrower",
+                  "marker": "Spawn_CatwalkB",
+                  "entry": "appear",
+                  "delay": 0.4
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_TurbineBLeft",
+                  "entry": "run_in",
+                  "delay": 0.7
+                },
+                {
+                  "type": "civilian",
+                  "marker": "Spawn_Technician",
+                  "entry": "stand_up",
+                  "delay": 0.2
+                }
+              ]
+            },
+            {
+              "spawns": [
+                {
+                  "type": "heavy",
+                  "marker": "Spawn_HallBFar",
+                  "entry": "run_in",
+                  "delay": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "showdown",
+      "stops": [
+        {
+          "path_offset": 186.1,
+          "travel_speed": 3,
+          "look_at": "Look_Boss",
+          "waves": [
+            {
+              "spawns": [
+                {
+                  "type": "boss",
+                  "marker": "Spawn_BossCentre",
+                  "entry": "stand_up",
+                  "delay": 0,
+                  "phase_markers": ["Spawn_BossCentre", "Spawn_BossLeft", "Spawn_BossRight"]
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BossGuardL",
+                  "entry": "run_in",
+                  "delay": 1.5
+                },
+                {
+                  "type": "grunt",
+                  "marker": "Spawn_BossGuardR",
+                  "entry": "run_in",
+                  "delay": 2.5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

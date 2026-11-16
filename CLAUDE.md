@@ -10,10 +10,10 @@ Design: docs/design.md. Build spec: docs/spec.md.
 - Build: npm run build && npm run budget
 - Browser test: npm run test:e2e (screenshots land in test-results/, incl. a tour of every stage 1 stop)
   - If the installed Chromium does not match @playwright/test, set PW_CHROMIUM_PATH to its binary
-- Stage 1 greybox: npm run greybox (writes public/assets/stages/stage1.glb, then markers.json)
+- Stage greyboxes: npm run greybox (writes every public/assets/stages/stageN.glb, then markers.json)
 - Markers only: npm run markers (re-extract markers.json from every stage .glb)
 - Jump in: http://localhost:5173/PocV2/?stage=1&stop=4&seed=42&debug=1
-  - `stage` = `1` or `range`; `stop` is 1-based; `difficulty` = easy|normal|hard; `god=1` never loses a life
+  - `stage` = `1`, `2`, `3` or `range`; `stop` is 1-based; `difficulty` = easy|normal|hard; `god=1` never loses a life
   - `debug=1` draws hit zones and ring timers and exposes `window.__game` (see src/debug/hooks.ts); `test=1` exposes it without drawing
   - Browser tests hold the frame loop (`__game.hold(true)`) and drive steps with `__game.stepFrames(n)`
 
@@ -22,7 +22,8 @@ Design: docs/design.md. Build spec: docs/spec.md.
 - src/sim/ is pure: no three, no DOM, no Date, no Math.random. Every rule there has a unit test.
 - src/view/ never mutates game state. It reads state and reacts to events.
 - No gameplay numbers in code. Read them from public/data/tuning.json.
-- New encounters are JSON in public/data/stages/. Do not hard-code spawns.
+- New encounters are JSON in public/data/stages/. Do not hard-code spawns. A new stage also needs an
+  entry in public/data/stages/index.json (play order) and a generator or .glb.
 - Level layout lives in the stage .glb (named empties: Path_, Look_, Spawn_, Cover_). Never edit
   *.markers.json by hand; it is generated, and validate fails when it is stale.
 - Relative imports use explicit .ts extensions, so tools/ can run with plain `node` and reuse src/sim.

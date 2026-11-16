@@ -1,4 +1,4 @@
-import { Vector3 } from 'three';
+import { Mesh, Vector3, type Object3D } from 'three';
 import {
   createGame,
   type Difficulty,
@@ -19,10 +19,19 @@ import { Overlay } from './view/overlay.ts';
 import { Renderer } from './view/renderer.ts';
 import { buildStageView } from './view/stageView.ts';
 
+export interface StageInfo {
+  id: string;
+  name: string;
+}
+
 export interface AppOptions {
   data: GameData;
   stageId: string;
   stageName: string;
+  /** Every stage in play order, from data/stages/index.json. */
+  catalog: StageInfo[];
+  /** Downloads a stage's data and model, reporting progress 0..1. */
+  loadStage: (id: string, onProgress: (fraction: number) => void) => Promise<GameData>;
   /** From the URL; when absent the saved option is used. */
   difficulty: Difficulty | null;
   seed: number;
@@ -69,10 +78,19 @@ export class App {
   private prevCamera: Vec3 = { x: 0, y: 0, z: 0 };
   private endTimer = -1;
   private stageBuilt = false;
+  private stageGroup: Object3D | null = null;
+  private data: GameData;
+  stageId: string;
+  private stageName: string;
+  /** Set when clearing this stage unlocked the next one, for the results screen. */
+  private unlockedName: string | null = null;
   private lastCountdown = -1;
   private saidGo = false;
 
   constructor(private readonly opts: AppOptions) {
+    this.data = opts.data;
+    this.stageId = opts.stageId;
+    this.stageName = opts.stageName;
     this.tuning = opts.data.tuning;
     this.save = opts.save;
     this.difficulty = opts.difficulty ?? this.save.data.options.difficulty;
@@ -113,8 +131,8 @@ export class App {
 
   newGame(startStop = this.opts.startStop): void {
     this.game = createGame({
-      stage: this.opts.data.stage,
-      markers: this.opts.data.markers,
+      stage: this.data.stage,
+      markers: this.data.markers,
       tuning: this.tuning,
       difficulty: this.difficulty,
       seed: this.opts.seed,
@@ -123,7 +141,8 @@ export class App {
     });
     if (!this.stageBuilt) {
       const spawns = this.game.stage.stops.flatMap((stop) => stop.waves.flat().map((sp) => sp.position));
-      this.renderer.scene.add(buildStageView(this.game.stage, spawns, this.opts.data.environment));
+      this.stageGroup = buildStageView(this.game.stage, spawns, this.data.environment);
+      this.renderer.scene.add(this.stageGroup);
       this.stageBuilt = true;
     }
     this.prevCamera = this.game.state.camera.position;
@@ -132,6 +151,7 @@ export class App {
     this.input.held = false;
     this.accumulator = 0;
     this.endTimer = -1;
+    this.unlockedName = null;
     this.hud.reset();
     this.overlay.clearEffects();
   }
@@ -238,10 +258,15 @@ export class App {
           if (this.screens.current === 'continue') this.screens.show('playing');
           this.endTimer = RESULTS_DELAY;
           break;
-        case 'StageCleared':
-          this.save.markCleared(this.opts.stageId);
+        case 'StageCleared': {
+          const index = this.opts.catalog.findIndex((x) => x.id === this.stageId);
+          const next = this.opts.catalog[index + 1];
+          const wasLocked = next !== undefined && !this.isUnlocked(next.id);
+          this.save.markCleared(this.stageId);
+          this.unlockedName = wasLocked ? next.name : null;
           this.endTimer = RESULTS_DELAY;
           break;
+        }
       }
     }
   }
@@ -250,8 +275,53 @@ export class App {
 
   private showTitle(): void {
     this.hud.show(false);
-    const best = this.save.table(this.opts.stageId, this.difficulty)[0]?.score;
-    this.screens.show('title', { difficulty: this.difficulty, ...(best ? { best } : {}) });
+    const best = this.save.table(this.stageId, this.difficulty)[0]?.score;
+    const index = this.opts.catalog.findIndex((x) => x.id === this.stageId);
+    const unlocked = this.opts.catalog.filter((x) => this.isUnlocked(x.id)).length;
+    this.screens.show('title', {
+      difficulty: this.difficulty,
+      ...(best ? { best } : {}),
+      stageLabel:
+        index >= 0 ? `STAGE ${index + 1}: ${this.stageName.toUpperCase()}` : this.stageName.toUpperCase(),
+      stagesUnlocked: unlocked,
+      stagesTotal: this.opts.catalog.length,
+    });
+  }
+
+  /** Stage 1 is always open; each later stage opens when the one before it has been cleared. */
+  isUnlocked(id: string): boolean {
+    const i = this.opts.catalog.findIndex((x) => x.id === id);
+    if (i <= 0) return true;
+    return this.save.data.cleared.includes(this.opts.catalog[i - 1]!.id);
+  }
+
+  /** Swaps to another stage: downloads its data and model only now, behind the loading bar. */
+  async selectStage(id: string): Promise<void> {
+    if (id === this.stageId && this.stageBuilt) return;
+    const info = this.opts.catalog.find((x) => x.id === id);
+    this.hud.show(false);
+    this.screens.show('loading');
+    const data = await this.opts.loadStage(id, (f) => this.screens.setProgress(f));
+    if (this.stageGroup) {
+      this.renderer.scene.remove(this.stageGroup);
+      this.stageGroup.traverse((o) => {
+        if (o instanceof Mesh) o.geometry.dispose();
+      });
+      this.stageGroup = null;
+    }
+    this.data = data;
+    this.stageId = id;
+    this.stageName = info?.name ?? (data.stage as { name?: string }).name ?? id;
+    this.stageBuilt = false;
+    this.newGame(0);
+    this.showTitle();
+  }
+
+  private cycleStage(): void {
+    const open = this.opts.catalog.filter((x) => this.isUnlocked(x.id));
+    const i = open.findIndex((x) => x.id === this.stageId);
+    const next = open[(i + 1) % open.length];
+    if (next && next.id !== this.stageId) void this.selectStage(next.id);
   }
 
   private showResults(): void {
@@ -264,15 +334,16 @@ export class App {
       ...(s.result ? { rank: s.result.rank } : {}),
       accuracy: s.score.shots === 0 ? 0 : Math.round((s.score.shotsOnTarget / s.score.shots) * 100),
       continuesUsed: s.continuesUsed,
-      askInitials: this.save.qualifies(this.opts.stageId, this.difficulty, s.score.score),
+      askInitials: this.save.qualifies(this.stageId, this.difficulty, s.score.score),
+      ...(cleared && this.unlockedName ? { unlocked: this.unlockedName } : {}),
     });
   }
 
   private showScores(difficulty: Difficulty, highlight = -1): void {
     this.screens.show('scores', {
       difficulty,
-      stageName: this.opts.stageName.toUpperCase(),
-      table: this.save.table(this.opts.stageId, difficulty),
+      stageName: this.stageName.toUpperCase(),
+      table: this.save.table(this.stageId, difficulty),
       highlight,
     });
   }
@@ -338,7 +409,7 @@ export class App {
       case 'submit-initials': {
         const value = this.screens.root.querySelector<HTMLInputElement>('#initials')?.value ?? '';
         const s = this.game.state;
-        const place = this.save.addScore(this.opts.stageId, this.difficulty, {
+        const place = this.save.addScore(this.stageId, this.difficulty, {
           initials: value,
           score: s.score.score,
           rank: s.result?.rank ?? 'C',
@@ -368,6 +439,9 @@ export class App {
         break;
       case 'credits':
         this.screens.show('credits');
+        break;
+      case 'stage':
+        this.cycleStage();
         break;
       case 'set-easy':
       case 'set-normal':
@@ -401,7 +475,7 @@ export class App {
   }
 
   private showScoresOrTitle(): void {
-    if (this.save.table(this.opts.stageId, this.difficulty).length > 0) this.showScores(this.difficulty);
+    if (this.save.table(this.stageId, this.difficulty).length > 0) this.showScores(this.difficulty);
     else {
       this.newGame();
       this.showTitle();
@@ -504,7 +578,13 @@ export class App {
     // Music follows the screen: title theme on menus, the stage or boss theme in play (quieter while
     // paused or offered a continue), silence under the results jingle.
     if (playing || screen === 'paused' || screen === 'continue') {
-      this.audio.playMusic(this.audio.themeFor(s));
+      this.audio.playMusic(
+        this.audio.themeFor(s),
+        Math.max(
+          0,
+          this.opts.catalog.findIndex((x) => x.id === this.stageId),
+        ),
+      );
       this.audio.duck(!playing);
       if (playing) this.audio.update(s);
     } else if (screen === 'results') {

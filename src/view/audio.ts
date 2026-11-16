@@ -30,6 +30,12 @@ export type Sfx =
   | 'menu';
 
 const LOOKAHEAD = 0.12; // seconds of music scheduled ahead of the clock
+/** Per-stage key and tempo for the shared themes: stage 1 as written, then up a minor third, then down a tone. */
+const VARIANTS = [
+  { transpose: 0, tempo: 1 },
+  { transpose: 3, tempo: 1.04 },
+  { transpose: -2, tempo: 1.07 },
+];
 const midi = (n: number) => 440 * Math.pow(2, (n - 69) / 12);
 
 /**
@@ -44,6 +50,7 @@ export class AudioDirector {
   private noise: AudioBuffer | null = null;
   private volumes = { music: 0.6, sfx: 0.8 };
   private theme: Theme | null = null;
+  private variant = 0;
   private step = 0;
   private nextStepAt = 0;
   private timer: ReturnType<typeof setInterval> | null = null;
@@ -94,9 +101,14 @@ export class AudioDirector {
 
   // ---------- Music ----------
 
-  playMusic(theme: Theme | null): void {
-    if (theme === this.theme) return;
+  /**
+   * Plays a theme. `variant` (the stage index) shifts the key and tempo, so each stage's music is
+   * its own while sharing the tunes.
+   */
+  playMusic(theme: Theme | null, variant = 0): void {
+    if (theme === this.theme && variant === this.variant) return;
     this.theme = theme;
+    this.variant = variant;
     if (this.timer) clearInterval(this.timer);
     this.timer = null;
     if (!theme || !this.ctx) return;
@@ -116,14 +128,16 @@ export class AudioDirector {
     const ctx = this.ctx;
     if (!ctx || !this.theme) return;
     const song = SONGS[this.theme];
-    const stepLen = 60 / song.bpm / 4;
+    const v = VARIANTS[this.variant % VARIANTS.length]!;
+    const stepLen = 60 / (song.bpm * v.tempo) / 4;
+    const note = (n: number) => midi(n + v.transpose);
     while (this.nextStepAt < ctx.currentTime + LOOKAHEAD) {
       const i = this.step % STEPS_PER_LOOP;
       const t = this.nextStepAt;
       const bass = song.bass[i]!;
-      if (bass) this.voice(t, midi(bass), stepLen * 1.8, 'square', 0.22, this.musicBus!, 700);
+      if (bass) this.voice(t, note(bass), stepLen * 1.8, 'square', 0.22, this.musicBus!, 700);
       const lead = song.lead[i]!;
-      if (lead) this.voice(t, midi(lead), stepLen * 1.6, song.leadWave, 0.12, this.musicBus!, 3200);
+      if (lead) this.voice(t, note(lead), stepLen * 1.6, song.leadWave, 0.12, this.musicBus!, 3200);
       const d = song.drums[i];
       if (d === 'k') this.kick(t, this.musicBus!, 0.9);
       else if (d === 's') this.burst(t, 0.12, 1800, 'bandpass', 0.45, this.musicBus!);
