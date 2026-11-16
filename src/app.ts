@@ -85,6 +85,8 @@ export class App {
   /** Set when clearing this stage unlocked the next one, for the results screen. */
   private unlockedName: string | null = null;
   private lastCountdown = -1;
+  /** True while the WebGL context is lost; the game stays paused and nothing is drawn in 3D. */
+  contextLost = false;
   private saidGo = false;
 
   constructor(private readonly opts: AppOptions) {
@@ -120,6 +122,20 @@ export class App {
 
     this.newGame(opts.startStop);
     this.showTitle();
+
+    // The GPU can drop the WebGL context (driver reset, too many tabs). Pause, say so, and carry on
+    // when it comes back; three.js re-uploads the scene by itself on restore.
+    canvas.addEventListener('webglcontextlost', () => {
+      this.contextLost = true;
+      this.pauseIfPlaying();
+      if (this.screens.current === 'paused')
+        this.screens.show('paused', { message: 'GRAPHICS RESET… PLEASE WAIT' });
+    });
+    canvas.addEventListener('webglcontextrestored', () => {
+      this.contextLost = false;
+      this.renderer.resize();
+      if (this.screens.current === 'paused') this.screens.show('paused', { message: 'GRAPHICS RESTORED' });
+    });
 
     const onHidden = () => this.pauseIfPlaying();
     window.addEventListener('blur', onHidden);
@@ -183,7 +199,7 @@ export class App {
     const events = this.game.step(this.input.drain());
     if (events.length > 0) {
       this.audio.onEvents(events, weaponBefore);
-      this.actors.onEvents(events);
+      this.actors.onEvents(events, this.save.data.options.reducedFlash);
       this.eventLog.push(...events);
       if (this.eventLog.length > EVENT_LOG_SIZE)
         this.eventLog.splice(0, this.eventLog.length - EVENT_LOG_SIZE);
@@ -572,6 +588,7 @@ export class App {
       showCrosshair: playing,
       borderZone: pointer !== null && this.input.inBorderZone(pointer),
       debug: this.opts.debug,
+      reducedFlash: this.save.data.options.reducedFlash,
     });
     this.hud.update(s);
 

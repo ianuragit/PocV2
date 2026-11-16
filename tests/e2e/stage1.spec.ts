@@ -1,37 +1,6 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import type { DebugHooks } from '../../src/debug/hooks.ts';
-import { hooks, openGame, snap, watchErrors } from './game.ts';
-
-/**
- * An in-page bot: every shot goes through projection to the screen and back to a ray, exactly as
- * a click would. It runs inside the page so thousands of steps take seconds, not minutes.
- */
-async function playToEnd(page: Page) {
-  return page.evaluate(() => {
-    const g = (window as unknown as { __game: DebugHooks }).__game;
-    const seenAt = new Map<number, number>();
-    for (let i = 0; i < 20_000; i++) {
-      const s = g.state();
-      if (s.phase === 'stageClear' || s.phase === 'gameOver') {
-        return { phase: s.phase, stop: s.stop, score: s.score.score, lives: s.lives, result: s.result };
-      }
-      for (const a of s.actors) if (!seenAt.has(a.id)) seenAt.set(a.id, s.frame);
-      const target = s.actors
-        .filter((a) => ['enemy', 'boss', 'projectile'].includes(a.role))
-        .filter((a) => ['entering', 'waiting', 'aiming', 'flying'].includes(a.phase))
-        .filter((a) => s.frame - seenAt.get(a.id)! >= 30)
-        .sort((a, b) => Number(b.role === 'projectile') - Number(a.role === 'projectile') || a.id - b.id)[0];
-      if (s.weapon.ammo === 0) {
-        if (s.weapon.reloading === 0) g.reload();
-      } else if (target && s.weapon.cooldown === 0) {
-        const p = g.aimScreen(target.id);
-        if (p) g.fireAt(p.x, p.y);
-      }
-      g.stepFrames(1);
-    }
-    return { phase: 'timeout', stop: -1, score: 0, lives: 0, result: null };
-  });
-}
+import { hooks, openGame, playToEnd, snap, watchErrors } from './game.ts';
 
 test.describe('stage 1 (M3 + M4 acceptance)', () => {
   test('full arcade loop: title, the whole stage and boss, rank, initials, high score kept after reload', async ({

@@ -176,9 +176,10 @@ for (let z = 66; z < 130; z += 12) {
     dam.box(x0, 0, z0, x1, 8, z0 + 8, C.dam, { top: 0x8f8b82 });
     dam.box(x0, 7.6, z0 - 0.1, x1, 8.2, z0 + 8.1, C.concrete);
   }
-  dam.box(-3.9, 5.6, z0 + 2.6, 3.9, 6, z0 + 5.4, C.concreteB, { bottom: true });
-  dam.box(-3.9, 6, z0 + 2.6, 3.9, 6.5, z0 + 2.75, C.rail);
-  dam.box(-3.9, 6, z0 + 5.25, 3.9, 6.5, z0 + 5.4, C.rail);
+  // The bridge deck is 4 m up, low enough that someone standing on it is in view.
+  dam.box(-3.9, 3.6, z0 + 2.6, 3.9, 4, z0 + 5.4, C.concreteB, { bottom: true });
+  dam.box(-3.9, 4, z0 + 2.6, 3.9, 4.35, z0 + 2.75, C.rail);
+  dam.box(-3.9, 4, z0 + 5.25, 3.9, 4.35, z0 + 5.4, C.rail);
   cover('Sandbags', dam, 1.6, 0, z0 + 3, 3.4, 1.0, z0 + 3.6, C.sandbag, 0xc4b38a);
 }
 {
@@ -201,7 +202,7 @@ crate('Crest', STOPS.crestA, 6, -2.5);
 look('CrestB', STOPS.crestB);
 spawn('TowerDoorL', STOPS.crestB, 7, -3.1);
 spawn('SandbagRight', STOPS.crestB, 9.8, -1.1);
-spawn('Bridge', STOPS.crestB, 10, 1, 6);
+spawn('Bridge', STOPS.crestB, 10, 1, 4);
 spawn('CrestBFar', STOPS.crestB, 16, 1.8);
 spawn('Engineer', STOPS.crestB, 6, 2.6);
 
@@ -251,14 +252,14 @@ for (let x = -7; x < 7; x += 2.4) hall.box(x, 3.4, 193.9, x + 1.8, 5.4, 194, 0x9
 
 look('HallA', STOPS.hallA);
 spawn('HallAFloorL', STOPS.hallA, 9, -4);
-spawn('CatwalkA', STOPS.hallA, 10, -9.4, 3.5);
+spawn('CatwalkA', STOPS.hallA, 13, -9.4, 3.5);
 spawn('TurbineGap', STOPS.hallA, 8, 6.2);
 spawn('HallAMid', STOPS.hallA, 14, 0);
 crate('Hall', STOPS.hallA, 6, 2.4);
 
 look('HallB', STOPS.hallB);
 spawn('ConsoleRight', STOPS.hallB, 9.5, -4);
-spawn('CatwalkB', STOPS.hallB, 12, -9.5, 3.5);
+spawn('CatwalkB', STOPS.hallB, 14, -9.5, 3.5);
 spawn('TurbineBLeft', STOPS.hallB, 11, 6.6);
 spawn('HallBFar', STOPS.hallB, 18, 1);
 spawn('Technician', STOPS.hallB, 6, -2);

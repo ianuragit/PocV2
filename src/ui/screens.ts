@@ -119,7 +119,8 @@ export class Screens {
           ${d.best ? `<p class="small">BEST ${pad(d.best)}</p>` : ''}
           <p class="controls">${CONTROLS}</p>`;
       case 'paused':
-        return `<h2>PAUSED</h2><p class="blink">CLICK TO RESUME</p><p class="controls">${CONTROLS}</p>`;
+        return `<h2>PAUSED</h2>${d.message ? `<p class="small">${esc(d.message)}</p>` : ''}
+          <p class="blink">CLICK TO RESUME</p><p class="controls">${CONTROLS}</p>`;
       case 'continue':
         return `<h2>CONTINUE?</h2>
           <div class="countdown" id="continue-count">${d.seconds ?? 10}</div>
